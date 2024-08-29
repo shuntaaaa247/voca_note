@@ -4,8 +4,14 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+generator zod { //zod-prisma-typesによる型生成の設定
+  provider = "zod-prisma-types"
+  output = "../generated/zod"
+  createInputTypes = false
+}
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"] //エラー回避のために必要
 }
 
 datasource db {
@@ -15,7 +21,11 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
+  /// @zod.string.email().max(255, { message: "Must be 255 or fewer characters long" })
   email String @unique
-  name String
+  /// @zod.string.min(8, { message: "Must be 8 or more characters long" })
+  password String
+  /// @zod.string.max(50, {message: "Must be 8 or more characters long" })
+  username String
 }

@@ -1,5 +1,12 @@
-import express, { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 
-const categoryRouter: Router = express.Router();
 
-// categoryRouter
+const categoryRouter: Router = Router();
+
+categoryRouter.post("/", (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+  } catch {
+    
+  }
+})
