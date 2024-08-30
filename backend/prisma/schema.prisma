@@ -26,6 +26,28 @@ model User {
   email String @unique
   /// @zod.string.min(8, { message: "Must be 8 or more characters long" })
   password String
-  /// @zod.string.max(50, {message: "Must be 8 or more characters long" })
+  /// @zod.string.max(50, {message: "Must be 50 or fewer characters long" })
   username String
+  categories Category[]
+}
+
+model Category {
+  id String @id @default(uuid())
+  /// @zod.string.max(200, { message: "Must be 100 or fewer characters long" })
+  categoryName String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  items Item[]
+
+  @@unique(fields: [categoryName, userId])
+}
+
+model Item {
+  id String @id @default(uuid())
+  /// @zod.string.max(300, { message: "Must be 300 or fewer characters long" })
+  word String
+  /// @zod.string.max(300, { message: "Must be 300 or fewer characters long" })
+  meaning String
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
 }
