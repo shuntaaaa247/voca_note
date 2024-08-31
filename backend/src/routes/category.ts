@@ -31,6 +31,20 @@ categoryRouter.post("/", async (req: Request, res: Response, next: NextFunction)
   }
 })
 
+categoryRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const categories: Category[] = await prisma.category.findMany({
+      where: {
+        userId: req.decoded.id
+      }
+    })
+    return res.status(200).json({ message: "取得完了", categories });
+  } catch(e) {
+    console.log(e);
+    return res.json(500).json({ message: "予期せぬエラーが発生しました。" })
+  }
+})
+
 categoryRouter.all("/items", (req: Request, res: Response, next: NextFunction) => {
   next("route");
 })

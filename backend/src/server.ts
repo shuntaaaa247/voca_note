@@ -17,7 +17,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/categories", categoryRouter);
-app.use("/categories/items", itemRouter);
+app.use("/categories", itemRouter);
 
 app.listen(port, () => {
   console.log(`backend is running on ${port}`)
