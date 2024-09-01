@@ -12,6 +12,11 @@ export type Decoded = Payload & {
   exp: number,
 }
 
+export type LoggedinUser = {
+  user: Omit<User, "password">,
+  token: string
+}
+
 // declare namespace Express {
 //   export interface Request {
 //     decoded: string;

@@ -1,11 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { UserSchema, User } from "../../generated/zod";
 import { PrismaClient, Prisma } from "@prisma/client";
-import { Payload } from "../../types";
+import { Payload, LoggedinUser } from "../../types";
 import { z } from "zod";
 import { hash, compare } from "bcryptjs"
 import jwt from "jsonwebtoken"
 import "dotenv/config"
+
 
 const prisma = new PrismaClient();
 export const authRouter = Router();
@@ -15,10 +16,11 @@ authRouter.post("/register", async (req: Request, res: Response, next: NextFunct
     const userData = UserSchema.omit({"id": true}).parse(req.body);
     userData.password = await hash(req.body.password, 10);
     console.log(userData);
-    const user = await prisma.user.create({
+    const _user = await prisma.user.create({
       data: userData
     })
-    return res.status(200).json({ message: "ユーザー登録完了", user });
+    const { password, ...user} = _user;
+    return res.status(201).json({ user });
   } catch(e: unknown) {
     // console.log(e);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -54,11 +56,12 @@ authRouter.post("/login", async (req: Request, res: Response, next: NextFunction
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY!, { expiresIn: exp });
       console.log(`token => ${token}`)
 
-      return res.status(200).json({ message: "ユーザー取得完了", user, token });
+      return res.status(200).json({ user, token } as LoggedinUser);
     } else {
       return res.status(401).json({ message: "メールアドレス、またはパスワードが違います。" })
     }
   } catch (e: unknown) {
+    console.log(e)
     return res.status(500).json({ message: "予期せぬエラーが発生しました" })
   }
 })

@@ -23,6 +23,16 @@ services:
     environment:
       - NODE_ENV=development
 
+  test_db:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - ./backend/test-db-store:/var/lib/postgres/data
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=postgres
+
   # nginxはまだ自分には早かったから保留
   # nginx:
   #   image: nginx:alpine
