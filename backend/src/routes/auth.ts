@@ -19,7 +19,7 @@ authRouter.post("/register", async (req: Request, res: Response, next: NextFunct
     const _user = await prisma.user.create({
       data: userData
     })
-    const { password, ...user} = _user;
+    const { password, ...user } = _user;
     return res.status(201).json({ user });
   } catch(e: unknown) {
     // console.log(e);
