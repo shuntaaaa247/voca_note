@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "test:migrate": "dotenv -e .env.test -- npx prisma migrate dev",
-    "test": "dotenv -e .env.test -- jest"
+    "test": "dotenv -e .env.test -- jest --runInBand --forceExit --detectOpenHandles"
   },
   "keywords": [],
   "author": "",

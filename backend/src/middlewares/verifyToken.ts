@@ -20,6 +20,6 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     if(!req.headers["authorization"]) {
       return res.status(401).json({ message: "リクエストヘッダにauthorizationがありません"})
     }
-    return res.send("予期せぬエラーが発生しました。");
+    return res.status(500).json({ message: "予期せぬエラーが発生しました。" });
   }
 }
