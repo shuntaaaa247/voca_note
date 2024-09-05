@@ -58,3 +58,18 @@ userRouter.get("/:id", async (req: Request, res: Response, next: NextFunction) =
   //   return res.send("予期せぬエラーが発生しました。");
   // }
 })
+
+userRouter.delete("/delete", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: req.body.decoded.id
+      }
+    })
+
+    return res.status(204);
+  } catch(e) {
+    console.log(e);
+    return res.status(500).json("予期せぬエラーが発生しました。")
+  }
+})

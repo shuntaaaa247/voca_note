@@ -1,8 +1,11 @@
 
 import request from "supertest";
+import { describe, expect, jest, test, afterAll, beforeAll } from "@jest/globals"
+import { PrismaClient } from "@prisma/client";
 import { app } from "../app";
-import { describe, expect, jest, test } from "@jest/globals"
 import { User } from "../../generated/zod";
+
+const prisma = new PrismaClient();
 
 const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
 const tokenRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
@@ -15,6 +18,17 @@ const testUser1: User = {
 }
 
 describe("POST /auth/register", () => {
+
+  afterAll(async () => {
+    await prisma.user.delete({
+      where: {
+        email: testUser1.email
+      }
+    })
+    testUser1.id = "tentativeId";
+    console.log("テストデータ削除完了")
+  })
+
   test("should register a user and get this user", async () => {
     const response = await request(app).post("/auth/register")
       .send({
@@ -84,6 +98,26 @@ describe("POST /auth/register", () => {
 })
 
 describe("POST /auth/login", () => {
+
+  beforeAll(async () => {
+    const beforeAllResponse = await request(app).post("/auth/register")
+      .send({
+        email: testUser1.email,
+        password: testUser1.password,
+        username: testUser1.username
+      })
+    testUser1.id = beforeAllResponse.body.user.id;
+  })
+
+  afterAll(async () => {
+    await prisma.user.delete({
+      where: {
+        email: testUser1.email
+      }
+    })
+    console.log("テストデータ削除完了")
+  })
+
   test("should login and get a user", async () => {
     const response = await request(app).post("/auth/login")
       .send({
