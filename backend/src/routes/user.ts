@@ -11,6 +11,21 @@ const prisma = new PrismaClient();
 
 userRouter.use(verifyToken)
 
+userRouter.delete("/delete", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: req.decoded.id
+      }
+    })
+
+    return res.status(204).send();
+  } catch(e) {
+    console.log(e);
+    return res.status(500).json("予期せぬエラーが発生しました。")
+  }
+})
+
 userRouter.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
   // return res.status(200).json(req.decoded);
   try {
@@ -22,7 +37,7 @@ userRouter.get("/:id", async (req: Request, res: Response, next: NextFunction) =
 
     if (_user) {
       const { password, ...user } = _user;
-      return res.status(200).json({ message: "取得成功", user })
+      return res.status(200).json({ user })
     } else {
       return res.status(404).json({ message: "ユーザーが見つかりませんでした。"});
     }
@@ -57,19 +72,4 @@ userRouter.get("/:id", async (req: Request, res: Response, next: NextFunction) =
   //   }
   //   return res.send("予期せぬエラーが発生しました。");
   // }
-})
-
-userRouter.delete("/delete", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await prisma.user.delete({
-      where: {
-        id: req.body.decoded.id
-      }
-    })
-
-    return res.status(204);
-  } catch(e) {
-    console.log(e);
-    return res.status(500).json("予期せぬエラーが発生しました。")
-  }
 })

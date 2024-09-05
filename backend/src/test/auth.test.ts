@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
 const tokenRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
 
-const testUser1: User = {
+export const testUser1: User = {
   id: "tentativeId",
   email: "jest1@test.com",
   password: "password",
@@ -44,7 +44,7 @@ describe("POST /auth/register", () => {
 
     delete response.body.user.id
 
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       user: {
         email: testUser1.email,
         username: testUser1.username,
@@ -62,7 +62,7 @@ describe("POST /auth/register", () => {
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(400);
     
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       message: "そのメールアドレスはすでに使用されています。"
     })
   })
@@ -77,7 +77,7 @@ describe("POST /auth/register", () => {
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(400);
     
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       message: "password: Must be 8 or more characters long"
     })
   })
@@ -91,7 +91,7 @@ describe("POST /auth/register", () => {
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(400);
     
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       message: "email: Required"
     })
   })
@@ -100,13 +100,13 @@ describe("POST /auth/register", () => {
 describe("POST /auth/login", () => {
 
   beforeAll(async () => {
-    const beforeAllResponse = await request(app).post("/auth/register")
+    const response = await request(app).post("/auth/register")
       .send({
         email: testUser1.email,
         password: testUser1.password,
         username: testUser1.username
       })
-    testUser1.id = beforeAllResponse.body.user.id;
+    testUser1.id = response.body.user.id;
   })
 
   afterAll(async () => {
@@ -118,7 +118,7 @@ describe("POST /auth/login", () => {
     console.log("テストデータ削除完了")
   })
 
-  test("should login and get a user", async () => {
+  test("should login and get a user and a token", async () => {
     const response = await request(app).post("/auth/login")
       .send({
         email: testUser1.email,
@@ -131,7 +131,7 @@ describe("POST /auth/login", () => {
 
     delete response.body.token;
 
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       user: {
         id: testUser1.id,
         email: testUser1.email,
@@ -150,7 +150,7 @@ describe("POST /auth/login", () => {
       .expect(401);
 
 
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       message: "メールアドレス、またはパスワードが違います。"
     })
   })
@@ -163,9 +163,7 @@ describe("POST /auth/login", () => {
       })
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(401);
-
-
-    expect(response.body).toEqual({
+    expect(response.body).toStrictEqual({
       message: "メールアドレス、またはパスワードが違います。"
     })
   })
