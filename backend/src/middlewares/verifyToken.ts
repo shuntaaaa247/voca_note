@@ -11,7 +11,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
     req.decoded = decodedPayload;
     next();
   } catch (e: unknown) {
-    console.log(e)
+    // console.log(e)
     if (e instanceof jwt.TokenExpiredError) {
       return res.status(401).json({ message: "トークンの有効期限が切れています。" });
     } else if (e instanceof jwt.JsonWebTokenError) {

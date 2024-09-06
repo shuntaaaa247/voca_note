@@ -26,7 +26,7 @@ itemRouter.post("/items", async (req: Request, res: Response, next: NextFunction
       data: itemData
     });
     
-    return res.status(200).json({ message: "作成完了", item });
+    return res.status(201).json({ item });
   } catch(e) {
     if (e instanceof z.ZodError) {
       return res.status(400).json({ message: `${e.issues[0].path}: ${e.issues[0].message}`})

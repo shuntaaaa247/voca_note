@@ -3,19 +3,19 @@ import request from "supertest";
 import { describe, expect, jest, test, afterAll, beforeAll } from "@jest/globals"
 import { PrismaClient } from "@prisma/client";
 import { app } from "../app";
-import { User } from "../../generated/zod";
+import { uuidRegex, tokenRegex, testUser1 } from "./testData";
 
 const prisma = new PrismaClient();
 
-const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
-const tokenRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
+// export const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+// export const tokenRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
 
-export const testUser1: User = {
-  id: "tentativeId",
-  email: "jest1@test.com",
-  password: "password",
-  username: "jestUser1"
-}
+// export const testUser1: User = {
+//   id: "tentativeId",
+//   email: "jest1@test.com",
+//   password: "password",
+//   username: "jestUser1"
+// }
 
 describe("POST /auth/register", () => {
 
@@ -25,7 +25,7 @@ describe("POST /auth/register", () => {
         email: testUser1.email
       }
     })
-    testUser1.id = "tentativeId";
+    // testUser1.id = "jestUserId1";
     console.log("テストデータ削除完了")
   })
 

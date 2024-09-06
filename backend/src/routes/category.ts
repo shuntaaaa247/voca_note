@@ -16,8 +16,9 @@ categoryRouter.post("/", async (req: Request, res: Response, next: NextFunction)
     const category: Category = await prisma.category.create({
       data: categoryData
     });
-    return res.status(200).json({ message: "作成完了", category })
+    return res.status(201).json({ category })
   } catch(e) {
+    // console.log(e)
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return res.status(400).json({ message: "そのカテゴリー名はすでに使用されています。"})
@@ -26,7 +27,6 @@ categoryRouter.post("/", async (req: Request, res: Response, next: NextFunction)
     if (e instanceof z.ZodError) {
       return res.status(400).json({ message: `${e.issues[0].path}: ${e.issues[0].message}`})
     }
-    console.log(e)
     return res.status(500).json({ message: "予期せぬエラーが発生しました。" })
   }
 })
@@ -38,7 +38,7 @@ categoryRouter.get("/", async (req: Request, res: Response, next: NextFunction) 
         userId: req.decoded.id
       }
     })
-    return res.status(200).json({ message: "取得完了", categories });
+    return res.status(200).json({ categories });
   } catch(e) {
     console.log(e);
     return res.json(500).json({ message: "予期せぬエラーが発生しました。" })
