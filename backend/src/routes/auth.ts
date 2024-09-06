@@ -15,7 +15,7 @@ authRouter.post("/register", async (req: Request, res: Response, next: NextFunct
   try {
     const userData = UserSchema.omit({"id": true}).parse(req.body);
     userData.password = await hash(req.body.password, 10);
-    console.log(userData);
+    // console.log(userData);
     const _user = await prisma.user.create({
       data: userData
     })
@@ -54,7 +54,7 @@ authRouter.post("/login", async (req: Request, res: Response, next: NextFunction
       }
       const exp: number = 60*60; //有効期限1時間
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY!, { expiresIn: exp });
-      console.log(`token => ${token}`)
+      // console.log(`token => ${token}`)
 
       return res.status(200).json({ user, token } as LoggedinUser);
     } else {
