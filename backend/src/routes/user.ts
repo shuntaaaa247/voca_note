@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 
 userRouter.use(verifyToken)
 
-userRouter.delete("/delete", async (req: Request, res: Response, next: NextFunction) => {
+userRouter.delete("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     await prisma.user.delete({
       where: {

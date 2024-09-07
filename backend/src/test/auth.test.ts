@@ -7,26 +7,13 @@ import { uuidRegex, tokenRegex, testUser1 } from "./testData";
 
 const prisma = new PrismaClient();
 
-// export const uuidRegex = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
-// export const tokenRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
-
-// export const testUser1: User = {
-//   id: "tentativeId",
-//   email: "jest1@test.com",
-//   password: "password",
-//   username: "jestUser1"
-// }
-
 describe("POST /auth/register", () => {
-
   afterAll(async () => {
     await prisma.user.delete({
       where: {
         email: testUser1.email
       }
     })
-    // testUser1.id = "jestUserId1";
-    console.log("テストデータ削除完了")
   })
 
   test("should register a user and get this user", async () => {
@@ -52,7 +39,7 @@ describe("POST /auth/register", () => {
     })
   });
 
-  test("should be an error because of Unique-Email-Rule", async () => {
+  test("should be an error due to Unique-Email-Rule", async () => {
     const response = await request(app).post("/auth/register")
       .send({
         email: testUser1.email,
@@ -67,7 +54,7 @@ describe("POST /auth/register", () => {
     })
   })
 
-  test("should be an error because of Too-Short-Password", async () => {
+  test("should be an error due to Too-Short-Password", async () => {
     const response = await request(app).post("/auth/register")
       .send({
         email: testUser1.email,
@@ -82,7 +69,7 @@ describe("POST /auth/register", () => {
     })
   })
 
-  test("should be an error because of Blank-Email", async () => {
+  test("should be an error due to Blank-Email", async () => {
     const response = await request(app).post("/auth/register")
       .send({
         password: "short",
@@ -115,7 +102,6 @@ describe("POST /auth/login", () => {
         email: testUser1.email
       }
     })
-    console.log("テストデータ削除完了")
   })
 
   test("should login and get a user and a token", async () => {
@@ -140,7 +126,7 @@ describe("POST /auth/login", () => {
     })
   })
 
-  test("should be an error because of Wrong-Email", async () => {
+  test("should be an error due to Wrong-Email", async () => {
     const response = await request(app).post("/auth/login")
       .send({
         email: "wrong email",
@@ -155,7 +141,7 @@ describe("POST /auth/login", () => {
     })
   })
 
-  test("should be an error because of Wrong-Password", async () => {
+  test("should be an error due to Wrong-Password", async () => {
     const response = await request(app).post("/auth/login")
       .send({
         email: testUser1.email,
