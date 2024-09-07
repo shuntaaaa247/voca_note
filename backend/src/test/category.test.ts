@@ -1,51 +1,55 @@
 import request from "supertest";
 import { describe, expect, test, afterAll, beforeAll } from "@jest/globals"
 import { app } from "../app";
-import { Category } from "../../generated/zod";
-import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2 } from "./testData";
+import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3 } from "./testData";
 
-let token: string;
+let token1: string;
+let token2: string;
 
-// export let testCategory1: Category = {
-//   id: "tentativeId",
-//   categoryName: "testCategory1",
-//   userId: "tentativeUserId"
-// }
+beforeAll(async () => {
+  await request(app).post("/auth/register")
+    .send({
+      email: testUser1.email,
+      password: testUser1.password,
+      username: testUser1.username
+    })
+    .expect(201)
+  
+  await request(app).post("/auth/register")
+    .send({
+      email: testUser2.email,
+      password: testUser2.password,
+      username: testUser2.username
+    })
+    .expect(201)
 
-// export let testCategory2: Category = {
-//   id: "tentativeId",
-//   categoryName: "testCategory2",
-//   userId: "tentativeUserId"
-// }
+  const response = await request(app).post("/auth/login")
+    .send({
+      email: testUser1.email,
+      password: testUser1.password
+    })
+    .expect(200)
+
+  token1 = response.body.token;
+  testUser1.id = response.body.user.id
+  testCategory1.userId = testUser1.id
+
+})
+
+afterAll(async () => {
+  await request(app).delete("/users")
+    .set("authorization", `Bearer ${token1}`)
+    .expect(204)
+
+  await request(app).delete("/users")
+    .set("authorization", `Bearer ${token2}`)
+    .expect(204)
+})
 
 describe("POST /categories", () => {
-  beforeAll(async () => {
-    await request(app).post("/auth/register")
-      .send({
-        email: testUser1.email,
-        password: testUser1.password,
-        username: testUser1.username
-      })
-
-    const response = await request(app).post("/auth/login")
-      .send({
-        email: testUser1.email,
-        password: testUser1.password
-      })
-
-    token = response.body.token;
-    testUser1.id = response.body.user.id
-    testCategory1.userId = testUser1.id
-  })
-
-  afterAll(async () => {
-    await request(app).delete("/users/delete")
-      .set("authorization", `Bearer ${token}`)
-  })
-
   test("should create a category", async () => {
     const response = await request(app).post("/categories")
-      .set("authorization", `Bearer ${token}`)
+      .set("authorization", `Bearer ${token1}`)
       .send({
         categoryName: testCategory1.categoryName
       })
@@ -66,7 +70,7 @@ describe("POST /categories", () => {
 
   test("should be an error because of same categoryName", async () => {
     const response = await request(app).post("/categories")
-      .set("authorization", `Bearer ${token}`)
+      .set("authorization", `Bearer ${token1}`)
       .send({
         categoryName: testCategory1.categoryName
       })
@@ -77,28 +81,124 @@ describe("POST /categories", () => {
       message: "そのカテゴリー名はすでに使用されています。"
     })
   })
+})
 
-  test("should get all my categories", async () => {
-    let response = await request(app).post("/categories")
-      .set("authorization", `Bearer ${token}`)
+describe("GET /categories/:id", () => {
+  beforeAll(async () => {
+    let response = await request(app).post("/auth/login")
+      .send({
+        email: testUser2.email,
+        password: testUser2.password
+      })
+      .expect(200)
+    token2 = response.body.token;
+
+    response = await request(app).post("/categories")
+      .set("authorization", `Bearer ${token2}`)
       .send({
         categoryName: testCategory2.categoryName
       })
+      .expect(201)
+    
+    testCategory2.id = response.body.category.id;
+    testCategory2.userId = response.body.category.userId;
 
-    testCategory2.id = response.body.category.id
-    testCategory2.userId = response.body.category.userId
+    response = await request(app).post("/categories")
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        categoryName: testCategory3.categoryName
+      })
+      .expect(201)
 
-    response = await request(app).get("/categories")
-      .set("authorization", `Bearer ${token}`)
+    testCategory3.id = response.body.category.id;
+    testCategory3.userId = response.body.category.userId;
+  })
+
+  test("should get testUser1's all categories", async () => {
+    const response = await request(app).get("/categories")
+      .set("authorization", `Bearer ${token1}`)
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(200)
     expect(response.body).toStrictEqual({
       categories: [
         testCategory1,
-        testCategory2
+        testCategory3
       ]
     })
+  })
+})
 
+describe("DELETE /categories/:categoryId", () => {
+  test("should delete a category", async () => {
+    let response = await request(app).delete(`/categories/${testCategory1.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .expect(204)
+
+    response = await request(app).get("/categories")
+      .set("authorization", `Bearer ${token1}`)
+    
+    expect(response.body).toStrictEqual({
+      categories: [
+        testCategory3
+      ]
+    })
   })
 
+  test("should be an error due to no authority", async () => {
+    const response = await request(app).delete(`/categories/${testCategory2.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(403)
+
+    expect(response.body).toStrictEqual({
+      message: "権限がありません。"
+    })
+  })
+
+  test("should be an error due to wrong categoryId", async () => {
+    const response = await request(app).delete(`/categories/${testCategory1.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        categoryId: "99a81e0f-a806-71dd-d76f-e13e572cea2a"
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(404)
+
+    expect(response.body).toStrictEqual({
+      message: "カテゴリーが見つかりませんでした。"
+    })
+  })
+})
+
+describe("PATCH /categories/:categoryId", () => {
+  const newCategory3Name: string = `${testCategory3.categoryName}Edited`
+  test("should edit category3", async () => {
+    const response = await request(app).patch(`/categories/${testCategory3.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        newCategoryName: newCategory3Name
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(200)
+    expect(response.body).toStrictEqual({
+      category: {
+        id: testCategory3.id,
+        categoryName: newCategory3Name,
+        userId: testCategory3.userId
+      }
+    })
+  })
+
+  test("should be an error due to wrong categoryId", async () => {
+    const response = await request(app).patch(`/categories/d532c62b-7f46-6c61-c70f-7b05ee881f70`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        newCategoryName: newCategory3Name
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(404)
+    expect(response.body).toStrictEqual({
+      message: "カテゴリーが見つかりませんでした。"
+    })
+  })
 })
