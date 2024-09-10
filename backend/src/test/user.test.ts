@@ -3,7 +3,6 @@ import { describe, expect, test, beforeAll } from "@jest/globals"
 import { app } from "../app";
 import { testUser1 } from "./testData";
 
-let userId: string;
 let token: string
 
 beforeAll(async () => {
@@ -14,7 +13,9 @@ beforeAll(async () => {
       username: testUser1.username
     })
     .expect(201)
-  userId = response.body.user.id;
+  testUser1.id = response.body.user.id;
+  testUser1.createdAt = response.body.user.createdAt
+  testUser1.updatedAt = response.body.user.updatedAt
 
   response = await request(app).post("/auth/login")
     .send({
@@ -27,22 +28,24 @@ beforeAll(async () => {
 
 describe("GET /users/:id", () => {
   test("should get a user", async () => {
-    const response = await request(app).get(`/users/${userId}`)
+    const response = await request(app).get(`/users/${testUser1.id}`)
       .set("authorization", `Bearer ${token}`)
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(200);
 
     expect(response.body).toStrictEqual({
       user: {
-        id: userId,
+        id: testUser1.id,
         email: testUser1.email,
-        username: testUser1.username
+        username: testUser1.username,
+        createdAt: testUser1.createdAt,
+        updatedAt: testUser1.updatedAt
       }
     })
   })
 
   test("should be an error due to no token (brank token)", async () => {
-    const response = await request(app).get(`/users/${userId}`)
+    const response = await request(app).get(`/users/${testUser1.id}`)
       .set("authorization", "")
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(401)
@@ -53,7 +56,7 @@ describe("GET /users/:id", () => {
   })
 
   test("should be an error due to no header-authorization", async () => {
-    const response = await request(app).get(`/users/${userId}`)
+    const response = await request(app).get(`/users/${testUser1.id}`)
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(401)
     
@@ -63,7 +66,7 @@ describe("GET /users/:id", () => {
   })
 
   test("should be an error due to wrong token", async () => {
-    const response = await request(app).get(`/users/${userId}`)
+    const response = await request(app).get(`/users/${testUser1.id}`)
       .set("authorization", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(401)

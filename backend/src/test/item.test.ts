@@ -1,7 +1,7 @@
 import request from "supertest";
 import { describe, expect, test, afterAll, beforeAll } from "@jest/globals"
 import { app } from "../app";
-import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3, testItem1, testItem2, testItem3 } from "./testData";
+import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3, testItem1, testItem2, testItem3, ISO8601regex } from "./testData";
 
 let token1: string;
 let token2: string;
@@ -30,8 +30,10 @@ beforeAll(async () => {
     })
     .expect(200)
   token1 = response.body.token;
-  testUser1.id = response.body.user.id
-  testCategory1.userId = testUser1.id
+  testUser1.id = response.body.user.id;
+  testUser1.createdAt = response.body.createdAt;
+  testUser1.updatedAt = response.body.updatedAt;
+  // testCategory1.userId = testUser1.id
 
   response = await request(app).post("/auth/login")
     .send({
@@ -41,6 +43,8 @@ beforeAll(async () => {
     .expect(200)
   token2 = response.body.token;
   testUser2.id = response.body.user.id
+  testUser2.createdAt = response.body.createdAt;
+  testUser2.updatedAt = response.body.updatedAt;
   testCategory2.userId = testUser1.id
 
   response = await request(app).post("/categories")
@@ -76,15 +80,21 @@ describe("POST /categories/:categoryId/items", () => {
       .expect(201)
 
     expect(response.body.item.id).toMatch(uuidRegex)
+    expect(response.body.item.createdAt).toMatch(ISO8601regex)
+    expect(response.body.item.updatedAt).toMatch(ISO8601regex)
     testItem1.id = response.body.item.id
     testItem1.categoryId = response.body.item.categoryId
+    testItem1.createdAt = response.body.item.createdAt
+    testItem1.updatedAt = response.body.item.updatedAt
 
     expect(response.body).toStrictEqual({
       item: {
         id: testItem1.id,
         word: testItem1.word,
         meaning: testItem1.meaning,
-        categoryId: testCategory1.id
+        categoryId: testCategory1.id,
+        createdAt: testItem1.createdAt,
+        updatedAt: testItem1.updatedAt
       }
     })
   })
@@ -120,6 +130,8 @@ describe("GET /categories/:categoryId/items", () => {
       .expect(201)
     testItem3.id = response.body.item.id,
     testItem3.categoryId = testCategory1.id
+    testItem3.createdAt = response.body.item.createdAt
+    testItem3.updatedAt = response.body.item.updatedAt
   })
 
   test("should get all items in testCategory1", async () => {
@@ -156,12 +168,16 @@ describe("PATCH /categories/:categoryId/items/:itemId", () => {
       })
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(200)
+    expect(response.body.item.updatedAt).toMatch(ISO8601regex)
+    testItem1.updatedAt = response.body.item.updatedAt
     expect(response.body).toStrictEqual({
       item: {
         id: testItem1.id,
         word: `${testItem1.word}(Edited)`,
         meaning: `${testItem1.meaning}(Edited)`,
-        categoryId: testItem1.categoryId
+        categoryId: testItem1.categoryId,
+        createdAt: testItem1.createdAt,
+        updatedAt: testItem1.updatedAt
       }
     })
   })

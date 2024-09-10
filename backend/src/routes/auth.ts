@@ -13,7 +13,7 @@ export const authRouter = Router();
 
 authRouter.post("/register", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userData = UserSchema.omit({"id": true}).parse(req.body);
+    const userData = UserSchema.omit({"id": true, "createdAt":true, "updatedAt": true }).parse(req.body);
     userData.password = await hash(req.body.password, 10);
     // console.log(userData);
     const _user = await prisma.user.create({
@@ -22,7 +22,6 @@ authRouter.post("/register", async (req: Request, res: Response, next: NextFunct
     const { password, ...user } = _user;
     return res.status(201).json({ user });
   } catch(e: unknown) {
-    // console.log(e);
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
         return res.status(400).json({ message: "そのメールアドレスはすでに使用されています。"})

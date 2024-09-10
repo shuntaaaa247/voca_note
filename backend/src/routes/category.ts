@@ -12,7 +12,7 @@ categoryRouter.use(verifyToken);
 
 categoryRouter.post("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const categoryData = CategorySchema.omit({ id: true }).parse({categoryName: req.body.categoryName, userId: req.decoded.id});
+    const categoryData = CategorySchema.omit({ id: true, createdAt: true, updatedAt: true }).parse({categoryName: req.body.categoryName, userId: req.decoded.id});
     const category: Category = await prisma.category.create({
       data: categoryData
     });
