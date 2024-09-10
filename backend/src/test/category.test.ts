@@ -1,7 +1,7 @@
 import request from "supertest";
 import { describe, expect, test, afterAll, beforeAll } from "@jest/globals"
 import { app } from "../app";
-import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3 } from "./testData";
+import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3, ISO8601regex } from "./testData";
 
 let token1: string;
 let token2: string;
@@ -32,7 +32,6 @@ beforeAll(async () => {
 
   token1 = response.body.token;
   testUser1.id = response.body.user.id
-  testCategory1.userId = testUser1.id
 
 })
 
@@ -57,15 +56,21 @@ describe("POST /categories", () => {
       .expect(201)
     
     expect(response.body.category.id).toMatch(uuidRegex);
+    expect(response.body.category.createdAt).toMatch(ISO8601regex);
+    expect(response.body.category.updatedAt).toMatch(ISO8601regex);
+    testCategory1.id = response.body.category.id;
+    testCategory1.userId = testUser1.id
+    testCategory1.createdAt = response.body.category.createdAt
+    testCategory1.updatedAt = response.body.category.updatedAt
     expect(response.body).toStrictEqual({
       category: {
-        id: response.body.category.id,
+        id: testCategory1.id,
         categoryName: testCategory1.categoryName,
-        userId: testCategory1.userId
+        userId: testCategory1.userId,
+        createdAt: testCategory1.createdAt,
+        updatedAt: testCategory1.updatedAt
       }
     })
-    testCategory1.id = response.body.category.id
-    testCategory1.userId = response.body.category.userId
   })
 
   test("should be an error because of same categoryName", async () => {
@@ -102,6 +107,8 @@ describe("GET /categories/:id", () => {
     
     testCategory2.id = response.body.category.id;
     testCategory2.userId = response.body.category.userId;
+    testCategory2.createdAt = response.body.category.createdAt;
+    testCategory2.updatedAt = response.body.category.updatedAt;
 
     response = await request(app).post("/categories")
       .set("authorization", `Bearer ${token1}`)
@@ -112,6 +119,8 @@ describe("GET /categories/:id", () => {
 
     testCategory3.id = response.body.category.id;
     testCategory3.userId = response.body.category.userId;
+    testCategory3.createdAt = response.body.category.createdAt;
+    testCategory3.updatedAt = response.body.category.updatedAt;
   })
 
   test("should get testUser1's all categories", async () => {
@@ -180,11 +189,15 @@ describe("PATCH /categories/:categoryId", () => {
       })
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(200)
+    expect(response.body.category.updatedAt).toMatch(ISO8601regex)
+    testCategory3.updatedAt = response.body.category.updatedAt
     expect(response.body).toStrictEqual({
       category: {
         id: testCategory3.id,
         categoryName: newCategory3Name,
-        userId: testCategory3.userId
+        userId: testCategory3.userId,
+        createdAt: testCategory3.createdAt,
+        updatedAt: testCategory3.updatedAt
       }
     })
   })

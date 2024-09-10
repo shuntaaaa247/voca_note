@@ -20,7 +20,7 @@ itemRouter.post("/:categoryId/items", async (req: Request, res: Response, next: 
     if (req.decoded.id !== category?.userId) {
       return res.status(403).json({ message: "権限がありません。" })
     }
-    const itemData = ItemSchema.omit({ id: true }).parse({
+    const itemData = ItemSchema.omit({ id: true, createdAt: true, updatedAt: true }).parse({
       word: req.body.word,
       meaning: req.body.meaning,
       categoryId: category.id

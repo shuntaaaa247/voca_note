@@ -3,7 +3,7 @@ import request from "supertest";
 import { describe, expect, jest, test, afterAll, beforeAll } from "@jest/globals"
 import { PrismaClient } from "@prisma/client";
 import { app } from "../app";
-import { uuidRegex, tokenRegex, testUser1 } from "./testData";
+import { uuidRegex, tokenRegex, testUser1, ISO8601regex } from "./testData";
 
 const prisma = new PrismaClient();
 
@@ -27,9 +27,15 @@ describe("POST /auth/register", () => {
       .expect(201);
 
     expect(response.body.user.id).toMatch(uuidRegex);
+    expect(response.body.user.createdAt).toMatch(ISO8601regex)
+    expect(response.body.user.updatedAt).toMatch(ISO8601regex)
     testUser1.id = response.body.user.id;
+    testUser1.createdAt = response.body.user.createdAt;
+    testUser1.updatedAt = response.body.user.updatedAt;
 
     delete response.body.user.id
+    delete response.body.user.createdAt
+    delete response.body.user.updatedAt
 
     expect(response.body).toStrictEqual({
       user: {
@@ -94,6 +100,8 @@ describe("POST /auth/login", () => {
         username: testUser1.username
       })
     testUser1.id = response.body.user.id;
+    testUser1.createdAt = response.body.user.createdAt
+    testUser1.updatedAt = response.body.user.updatedAt
   })
 
   afterAll(async () => {
@@ -121,7 +129,9 @@ describe("POST /auth/login", () => {
       user: {
         id: testUser1.id,
         email: testUser1.email,
-        username: testUser1.username
+        username: testUser1.username,
+        createdAt: testUser1.createdAt,
+        updatedAt: testUser1.updatedAt
       }
     })
   })

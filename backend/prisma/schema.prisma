@@ -29,6 +29,8 @@ model User {
   /// @zod.string.max(50, {message: "Must be 50 or fewer characters long" })
   username String
   categories Category[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
@@ -38,6 +40,8 @@ model Category {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   items Item[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique(fields: [categoryName, userId])
 }
@@ -50,4 +54,6 @@ model Item {
   meaning String
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
