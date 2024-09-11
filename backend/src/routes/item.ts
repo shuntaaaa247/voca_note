@@ -39,7 +39,8 @@ itemRouter.post("/:categoryId/items", async (req: Request, res: Response, next: 
   }
 });
 
-itemRouter.get("/:categoryId/items", async (req: Request, res: Response, next: NextFunction) => {
+// itemRouter.get("/:categoryId/items", async (req: Request, res: Response, next: NextFunction) => {
+itemRouter.get("/:categoryId/items", async (req: Request, res: Response, next: NextFunction) => { // /:categoryId/items?cursor=[最後に取得したアイテムのcreatedAt]&limit=[取得したい件数]&order=latest
   try {
     const category: Category | null = await prisma.category.findUnique({
       where: {
@@ -55,11 +56,34 @@ itemRouter.get("/:categoryId/items", async (req: Request, res: Response, next: N
       return res.status(403).json({ message: "権限がありません。" })
     }
 
-    const items: Item[] = await prisma.item.findMany({
-      where: {
-        categoryId: req.params.categoryId,
-      }
-    })
+    let items: Item[];
+    if (req.query.cursor && req.query.limit) {
+      items = await prisma.item.findMany({
+        where: {
+          categoryId: req.params.categoryId,
+          createdAt: {
+            gt: String(req.query.cursor)
+          }
+        },
+        take: Number(req.query.limit),
+        orderBy: { createdAt: req.query.order !== "latest" ? "asc" : "desc" }
+      })
+    } else if (req.query.limit) {
+      items = await prisma.item.findMany({
+        where: {
+          categoryId: req.params.categoryId
+        },
+        take: Number(req.query.limit),
+        orderBy: { createdAt: req.query.order !== "latest" ? "asc" : "desc" }
+      })
+    } else {
+      items = await prisma.item.findMany({
+        where: {
+          categoryId: req.params.categoryId,
+        },
+        orderBy: { createdAt: "asc" }
+      })
+    }
 
     return res.status(200).json({ items });
   } catch(e) {

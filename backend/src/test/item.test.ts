@@ -1,7 +1,8 @@
 import request from "supertest";
 import { describe, expect, test, afterAll, beforeAll } from "@jest/globals"
 import { app } from "../app";
-import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3, testItem1, testItem2, testItem3, ISO8601regex } from "./testData";
+import { uuidRegex, testUser1,  ISO8601regex, testUser2, testCategory1, testCategory2, testCategory3, testItem1, testItem2, testItem3, testItem4, testItem5, testItem6 } from "./testData";
+import { Item } from "../../generated/zod";
 
 let token1: string;
 let token2: string;
@@ -120,32 +121,68 @@ describe("GET /categories/:categoryId/items", () => {
       .expect(201)
     testItem2.id = response.body.item.id,
     testItem2.categoryId = testCategory2.id
+    testItem2.createdAt = response.body.item.createdAt
+    testItem2.updatedAt = response.body.item.updatedAt
 
-    response = await request(app).post(`/categories/${testCategory1.id}/items`)
-      .set("authorization", `Bearer ${token1}`)
-      .send({
-        word: testItem3.word,
-        meaning: testItem3.meaning
-      })
-      .expect(201)
-    testItem3.id = response.body.item.id,
-    testItem3.categoryId = testCategory1.id
-    testItem3.createdAt = response.body.item.createdAt
-    testItem3.updatedAt = response.body.item.updatedAt
+    const testItems: Item[] = [testItem3, testItem4, testItem5, testItem6];
+
+    for (const testItem of testItems) {
+      const response = await request(app).post(`/categories/${testCategory1.id}/items`)
+        .set("authorization", `Bearer ${token1}`)
+        .send({
+          word: testItem.word,
+          meaning: testItem.meaning
+        })
+        .expect(201)
+      testItem.id = response.body.item.id,
+      testItem.categoryId = testCategory1.id
+      testItem.createdAt = response.body.item.createdAt
+      testItem.updatedAt = response.body.item.updatedAt
+    }
   })
 
-  test("should get all items in testCategory1", async () => {
-    const response = await request(app).get(`/categories/${testCategory1.id}/items`)
+  test("should get 3 items in testCategory1 (oldest to newest)", async () => {
+    const response = await request(app).get(`/categories/${testCategory1.id}/items?limit=3`)
       .set("authorization", `Bearer ${token1}`)
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(200)
     expect(response.body).toStrictEqual({
       items: [
         testItem1,
-        testItem3
+        testItem3,
+        testItem4
       ]
     })
   })
+
+  test("should get 3 items created after testItem3 in testCategory1 (oldest to newest)", async () => {
+    const response = await request(app).get(`/categories/${testCategory1.id}/items?cursor=${testItem3.createdAt}&limit=3`)
+      .set("authorization", `Bearer ${token1}`)
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(200)
+    expect(response.body).toStrictEqual({
+      items: [
+        testItem4,
+        testItem5,
+        testItem6
+      ]
+    })
+  })
+
+  test("should get 3 items created after testItem3 in testCategory1 (newest to oldest)", async () => {
+    const response = await request(app).get(`/categories/${testCategory1.id}/items?cursor=${testItem3.createdAt}&limit=3&order=latest`)
+      .set("authorization", `Bearer ${token1}`)
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(200)
+    expect(response.body).toStrictEqual({
+      items: [
+        testItem6,
+        testItem5,
+        testItem4
+      ]
+    })
+  })
+  
 
   test("should be an error due to no authority", async () => {
     const response = await request(app).get(`/categories/${testCategory1.id}/items`)
@@ -223,7 +260,10 @@ describe("DELETE /categories/:categoryId/items/:itemId", () => {
       .expect(200)
     expect(response.body).toStrictEqual({
       items: [
-        testItem3
+        testItem3,
+        testItem4, 
+        testItem5,
+        testItem6
       ]
     })
   })
