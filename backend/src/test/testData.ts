@@ -74,3 +74,30 @@ export const testItem3: Item = {
   createdAt: new Date(),
   updatedAt: new Date()
 }
+
+export const testItem4: Item = {
+  id: "testItem4ID",
+  word: "testItem4Word",
+  meaning: "testItem4Meaning",
+  categoryId: "testItem4CategoryId",
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+
+export const testItem5: Item = {
+  id: "testItem5ID",
+  word: "testItem5Word",
+  meaning: "testItem5Meaning",
+  categoryId: "testItem5CategoryId",
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+
+export const testItem6: Item = {
+  id: "testItem6ID",
+  word: "testItem6Word",
+  meaning: "testItem6Meaning",
+  categoryId: "testItem6CategoryId",
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
