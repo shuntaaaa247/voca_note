@@ -1,6 +1,6 @@
 import type { Item as ItemProps } from "../../../../backend/generated/zod"
 
-export const Item = ( { id, word, meaning, categoryId } : ItemProps) => {
+export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : ItemProps) => {
   return(
     <li key={id} className="pl-2">
       <div className="flex justify-start">
