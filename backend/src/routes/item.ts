@@ -8,6 +8,7 @@ export const itemRouter = Router();
 
 // categoryルータからここに処理が渡される。
 itemRouter.post("/:categoryId/items", async (req: Request, res: Response, next: NextFunction) => {
+  console.log("req.body " + JSON.stringify(req.body))
   try {
     const category: Category | null = await prisma.category.findUnique({
       where: {
