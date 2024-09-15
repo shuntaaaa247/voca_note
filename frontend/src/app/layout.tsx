@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { CookiesProvider } from 'next-client-cookies/server';
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,8 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-slate-200">
-      <body className={inter.className}>{children}</body>
-    </html>
+      <html lang="en" className="bg-slate-200">
+        <CookiesProvider>
+          <body className={inter.className}>{children}</body>
+        </CookiesProvider>
+      </html>
   );
 }
