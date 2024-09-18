@@ -45,6 +45,26 @@ categoryRouter.get("/", async (req: Request, res: Response, next: NextFunction) 
   }
 })
 
+categoryRouter.get("/:categoryId", async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const category: Category | null = await prisma.category.findUnique({
+      where: {
+        id: req.params.categoryId
+      }
+    })
+    if (!category) {
+      return res.status(404).json({ message: "カテゴリーが見つかりませんでした。"})
+    }
+    if (category.userId !== req.decoded.id) {
+      return res.status(403).json({ message: "権限がありません。"})
+    }
+    return res.status(200).json({ category })
+  } catch (e) {
+    console.log(e)
+    return res.status(500).json({ message: "予期せぬエラーが発生しました。"})
+  }
+})
+
 categoryRouter.delete("/:categoryId", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const category: Category | null = await prisma.category.findUnique({
