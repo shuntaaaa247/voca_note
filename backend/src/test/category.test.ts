@@ -2,6 +2,7 @@ import request from "supertest";
 import { describe, expect, test, afterAll, beforeAll } from "@jest/globals"
 import { app } from "../app";
 import { uuidRegex, testUser1, testUser2, testCategory1, testCategory2, testCategory3, ISO8601regex } from "./testData";
+import { response } from "express";
 
 let token1: string;
 let token2: string;
@@ -88,7 +89,7 @@ describe("POST /categories", () => {
   })
 })
 
-describe("GET /categories/:id", () => {
+describe("GET /categories", () => {
   beforeAll(async () => {
     let response = await request(app).post("/auth/login")
       .send({
@@ -190,6 +191,7 @@ describe("PATCH /categories/:categoryId", () => {
       .expect('Content-Type', "application/json; charset=utf-8")
       .expect(200)
     expect(response.body.category.updatedAt).toMatch(ISO8601regex)
+    testCategory3.categoryName = newCategory3Name
     testCategory3.updatedAt = response.body.category.updatedAt
     expect(response.body).toStrictEqual({
       category: {
@@ -212,6 +214,42 @@ describe("PATCH /categories/:categoryId", () => {
       .expect(404)
     expect(response.body).toStrictEqual({
       message: "カテゴリーが見つかりませんでした。"
+    })
+  })
+})
+
+describe("GET /categories/:categoryId", () => {
+  test("should get a category by categoryId", async () => {
+    const response = await request(app).get(`/categories/${testCategory3.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(200)
+    expect(response.body).toStrictEqual({
+      category: {
+        id: testCategory3.id,
+        categoryName: testCategory3.categoryName,
+        userId: testCategory3.userId,
+        createdAt: testCategory3.createdAt,
+        updatedAt: testCategory3.updatedAt
+      }
+    })
+  })
+  test("should be an error due to wrong categoryId", async () => {
+    const response = await request(app).get("/categories/d532c62b-7f46-6c61-c70f-7b05ee881f70")
+      .set("authorization", `Bearer ${token1}`)
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(404)
+    expect(response.body).toStrictEqual({
+      message: "カテゴリーが見つかりませんでした。"
+    })
+  })
+  test("should be an error due to no authority", async () => {
+    const response = await request(app).get(`/categories/${testCategory2.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(403)
+    expect(response.body).toStrictEqual({
+      message: "権限がありません。"
     })
   })
 })
