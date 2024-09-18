@@ -1,8 +1,10 @@
 "use client"
 import CreateIcon from '@mui/icons-material/Create'
-import { useState, useRef } from 'react'
+import { useState, useRef, useContext } from 'react'
 import { useCookies } from 'next-client-cookies';
-import { Item } from '../../../../backend/generated/zod';
+import { ModalWindow } from '../utils/modalWindow';
+import { useParams } from 'next/navigation';
+import { ItemsContext } from './testNote';
 
 export const CreateItemButton = () => {
   const cookies = useCookies();
@@ -12,13 +14,13 @@ export const CreateItemButton = () => {
   const meaningRef = useRef<HTMLInputElement>(null);
   const [wordErrorMessage, setWordErrorMessage] = useState<string>("") ;
   const [meaningErrorMessage, setMeaningErrorMessage] = useState<string>("")
+  const { items, setItems } = useContext(ItemsContext)
+  const params = useParams()
+  const categoryId = params.categoryId;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // console.log("token" + token);
-    // console.log("word " + wordRef.current?.value)
-    // console.log("meaning " + meaningRef.current?.value)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/45f6c41d-c78b-4cbf-88f9-1dbe16bd50b7/items`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items`, {
       method: "POST",
       headers: {
         "authorization": `Bearer ${token}`,
@@ -32,6 +34,7 @@ export const CreateItemButton = () => {
 
     const resJson = await res.json();
     if (resJson.item) {
+      setItems([...items ?? [], resJson.item])
       setModalIsOpen(false)
     } else if (resJson.message) {
       console.log(resJson.message)
@@ -48,21 +51,17 @@ export const CreateItemButton = () => {
   return(
     <>
       { modalIsOpen 
-        ? <div className='fixed top-0 left-0 w-full h-full bg-slate-100 bg-opacity-80 z-10' onClick={() => setModalIsOpen(false)}>
-            <div className='fixed top-[20%] left-[20%] w-[60%] h-[60%] bg-white rounded-xl shadow-xl z-20' onClick={(e) => e.stopPropagation()}>
-              <div className='flex justify-center '>
-                <form className='flex flex-col' onSubmit={handleSubmit}>
-                  <label>言葉</label>
-                  <input ref={wordRef}></input>
-                  <span>{wordErrorMessage ?? ""}</span>
-                  <label>意味</label>
-                  <input ref={meaningRef}></input>
-                  <span>{meaningErrorMessage ?? ""}</span>
-                  <button type='submit'>保存</button>
-                </form>
-              </div>
-            </div> 
-          </div>
+        ? <ModalWindow setModalIsOpen={setModalIsOpen} >
+            <form className='flex flex-col' onSubmit={handleSubmit}>
+              <label>言葉</label>
+              <input ref={wordRef}></input>
+              <span>{wordErrorMessage ?? ""}</span>
+              <label>意味</label>
+              <input ref={meaningRef}></input>
+              <span>{meaningErrorMessage ?? ""}</span>
+              <button type='submit'>保存</button>
+            </form>
+          </ModalWindow>
         : <></>
       }
       <div className="fixed bottom-10 right-10">

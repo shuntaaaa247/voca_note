@@ -1,11 +1,13 @@
 import { LeftBar } from "@/components/leftBar/leftBar"
-import { Note } from "@/components/note/note"
+import { TestNote } from "@/components/note/testNote"
 
-export default function Home() {
+const CategoryContent = () => {
   return (
     <main className="flex justify-start">
       <LeftBar />
-      <Note />
+      <TestNote />
     </main>
   )
 }
+
+export default CategoryContent

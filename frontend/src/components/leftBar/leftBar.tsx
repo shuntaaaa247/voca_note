@@ -1,18 +1,39 @@
-import { cookies } from "next/headers"
+import Link from 'next/link';
+import { cookies } from 'next/headers'
+import { Suspense } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
+import { Category } from "../../../../backend/generated/zod";
+import { CreateCategoryButton } from './createCategoryButton';
 
-export const LeftBar = () => {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token");
-  const userId = cookieStore.get("userId");
+export const LeftBar = async () => {
+  const cookieStore = cookies()
+  const token = cookieStore.get("token")?.value
+  const userId = cookieStore.get("userId")?.value
+
+  // const url: string = `${process.env.NEXT_PUBLIC_API_URL}/categories`
+  const url: string = `http://backend:5000/categories`
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "authorization": `Bearer ${token}`
+    }
+  })
+  const resJson = await response.json()
+  const categories: Category[] = resJson.categories
+
   return(
     <div className="flex flex-col h-screen basis-1/6 sticky top-0">
       <h1 className="text-3xl m-2 mb-10 font-thin">VOCA NOTE</h1>
-      <button className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">新規作成 +</button>
-      <button className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">IT用語</button>
-      <button className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">ビジネス用語</button>
-      <button className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">英単語</button>
-      {/* <p>{token?.value}</p> */}
-      <p>{userId?.value}</p>
+      <CreateCategoryButton />
+      <Suspense fallback={<div>読み込み中...</div>}>
+        {categories.map((category: Category) => {
+          return (
+            <Link href={`/category/${category.id}`} className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">{category.categoryName}</Link>    
+          )
+        })}
+      </Suspense>
+      <p>{userId}</p>
     </div>
   )
 }
