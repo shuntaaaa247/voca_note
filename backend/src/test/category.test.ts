@@ -87,6 +87,20 @@ describe("POST /categories", () => {
       message: "そのカテゴリー名はすでに使用されています。"
     })
   })
+
+  test("should be an error because categoryName is empty string", async () => {
+    const response = await request(app).post("/categories")
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        categoryName: ""
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(400)
+    
+    expect(response.body).toStrictEqual({
+      message: "categoryName: categoryName is required"
+    })
+  })
 })
 
 describe("GET /categories", () => {

@@ -75,9 +75,10 @@ describe("POST /auth/register", () => {
     })
   })
 
-  test("should be an error due to Blank-Email", async () => {
+  test("should be an error becatuse Email is empty string", async () => {
     const response = await request(app).post("/auth/register")
       .send({
+        email: "",
         password: "short",
         username: testUser1.username
       })
@@ -85,7 +86,21 @@ describe("POST /auth/register", () => {
       .expect(400);
     
     expect(response.body).toStrictEqual({
-      message: "email: Required"
+      message: "email: Invalid email"
+    })
+  })
+
+  test("should be an error due to Blank-Username", async () => {
+    const response = await request(app).post("/auth/register")
+      .send({
+        email: testUser1.email,
+        password: testUser1.password,
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(400);
+
+    expect(response.body).toStrictEqual({
+      message: "username: Required"
     })
   })
 })

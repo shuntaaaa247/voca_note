@@ -99,6 +99,36 @@ describe("POST /categories/:categoryId/items", () => {
       }
     })
   })
+
+  test("should be an error because word is empty", async () => {
+    const response = await request(app).post(`/categories/${testCategory1.id}/items`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        word: "",
+        meaning: testItem1.meaning
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(400)
+    
+    expect({
+      message: "word: word is required"
+    })
+  })
+
+  test("should be an error because meaning is empty", async () => {
+    const response = await request(app).post(`/categories/${testCategory1.id}/items`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        word: "",
+        meaning: testItem1.meaning
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(400)
+    
+    expect({
+      message: "meaning: meaning is required"
+    })
+  })
 })
 
 describe("GET /categories/:categoryId/items", () => {
