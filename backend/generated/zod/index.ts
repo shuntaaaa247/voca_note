@@ -33,7 +33,7 @@ export const UserSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email().max(255, { message: "Must be 255 or fewer characters long" }),
   password: z.string().min(8, { message: "Must be 8 or more characters long" }),
-  username: z.string().max(50, {message: "Must be 50 or fewer characters long" }),
+  username: z.string().min(1, { message: "username is required" }).max(50, {message: "Must be 50 or fewer characters long" }),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
@@ -46,7 +46,7 @@ export type User = z.infer<typeof UserSchema>
 
 export const CategorySchema = z.object({
   id: z.string().uuid(),
-  categoryName: z.string().max(200, { message: "Must be 100 or fewer characters long" }),
+  categoryName: z.string().min(1, { message: "categoryName is required" }).max(200, { message: "Must be 100 or fewer characters long" }),
   userId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -60,8 +60,8 @@ export type Category = z.infer<typeof CategorySchema>
 
 export const ItemSchema = z.object({
   id: z.string().uuid(),
-  word: z.string().max(300, { message: "Must be 300 or fewer characters long" }),
-  meaning: z.string().max(300, { message: "Must be 300 or fewer characters long" }),
+  word: z.string().min(1, { message: "Word is required" }).max(300, { message: "Must be 300 or fewer characters long" }),
+  meaning: z.string().min(1, { message: "Word is required" }).max(300, { message: "Must be 300 or fewer characters long" }),
   categoryId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
