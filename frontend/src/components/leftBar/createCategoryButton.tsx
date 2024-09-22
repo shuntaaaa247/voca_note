@@ -11,7 +11,7 @@ export const CreateCategoryButton = () => {
   const cookies = useCookies();
   const token = cookies.get("token");
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const [wordErrorMessage, setWordErrorMessage] = useState<string>("");
+  const [categoryNameErrorMessage, setCategoryNameErrorMessage] = useState<string>("");
   const categoryNameRef = useRef<HTMLInputElement>(null)
   const url: string = `${process.env.NEXT_PUBLIC_API_URL}/categories`
 
@@ -27,13 +27,13 @@ export const CreateCategoryButton = () => {
         categoryName: categoryNameRef.current?.value
       })
     })
+    const resJson = await res.json();
     if (res.ok) {
-      const resJson = await res.json();
       const newItem: Item = resJson.item;
+      setModalIsOpen(false);
     } else {
-      alert("カテゴリーを作成できませんでした")
+      setCategoryNameErrorMessage(resJson.message)
     }
-    setModalIsOpen(false);
     router.refresh()
   }
   return (
@@ -44,7 +44,7 @@ export const CreateCategoryButton = () => {
           <form className='flex flex-col' onSubmit={handleSubmit}>
             <label>カテゴリー名</label>
             <input ref={categoryNameRef}></input>
-            <span>{wordErrorMessage ?? ""}</span>
+            <span className="text-red-500">{categoryNameErrorMessage ?? ""}</span>
             <button type='submit'>保存</button>
           </form>
         </ModalWindow>

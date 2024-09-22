@@ -4,11 +4,14 @@ import { Suspense } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Category } from "../../../../backend/generated/zod";
 import { CreateCategoryButton } from './createCategoryButton';
+import { redirect } from 'next/navigation';
+redirect
 
 export const LeftBar = async () => {
   const cookieStore = cookies()
   const token = cookieStore.get("token")?.value
   const userId = cookieStore.get("userId")?.value
+  let categories: Category[] = []
 
   // const url: string = `${process.env.NEXT_PUBLIC_API_URL}/categories`
   const url: string = `http://backend:5000/categories`
@@ -20,7 +23,16 @@ export const LeftBar = async () => {
     }
   })
   const resJson = await response.json()
-  const categories: Category[] = resJson.categories
+  // const categories = resJson.categories
+  if (response.ok) {
+    categories = resJson.categories
+  } else if (response.status === 401) {
+    redirect("/login")
+  } else {
+    return (
+      <div>500 Server Error</div>
+    )
+  }
 
   return(
     <div className="flex flex-col h-screen basis-1/6 sticky top-0">

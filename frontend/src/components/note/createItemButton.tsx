@@ -37,10 +37,11 @@ export const CreateItemButton = () => {
       setItems([...items ?? [], resJson.item])
       setModalIsOpen(false)
     } else if (resJson.message) {
-      console.log(resJson.message)
-      if (resJson.message.include("word")) {
+      setWordErrorMessage("");
+      setMeaningErrorMessage("")
+      if (resJson.message.includes("word")) {
         setWordErrorMessage(resJson.message)
-      } else if (resJson.message.include("word")) {
+      } else if (resJson.message.includes("meaning")) {
         setMeaningErrorMessage(resJson.message)
       } else {
         setMeaningErrorMessage(resJson.message)
@@ -55,10 +56,10 @@ export const CreateItemButton = () => {
             <form className='flex flex-col' onSubmit={handleSubmit}>
               <label>言葉</label>
               <input ref={wordRef}></input>
-              <span>{wordErrorMessage ?? ""}</span>
+              <span className='text-red-500'>{wordErrorMessage ?? ""}</span>
               <label>意味</label>
               <input ref={meaningRef}></input>
-              <span>{meaningErrorMessage ?? ""}</span>
+              <span className='text-red-500'>{meaningErrorMessage ?? ""}</span>
               <button type='submit'>保存</button>
             </form>
           </ModalWindow>
