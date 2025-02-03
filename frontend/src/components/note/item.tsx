@@ -1,8 +1,10 @@
-import { useState } from "react"
-import type { Item as ItemProps } from "../../../../backend/generated/zod"
+import { useState, useContext } from "react"
+import { useCookies } from 'next-client-cookies';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { ItemsContext } from "./testNote";
+import type { Item as ItemProps } from "../../../../backend/generated/zod"
 import { ModalWindow } from "../utils/modalWindow";
 import { UI_DATA } from "../../constants/uidata";
 
@@ -20,7 +22,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
   const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] = useState<boolean>(false);
 
   const getSelectionModalPosition = () => {
-    const rect = document.getElementById(`list_item_${id}`)?.getBoundingClientRect();
+    const rect = document.getElementById(`item_${id}`)?.getBoundingClientRect();
     console.log(rect)
     setSelectionModalPosition({
       top: Math.floor(rect?.top ?? 0),
@@ -51,7 +53,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
                 left: (selectionModalPosition.left ?? 0) + UI_DATA.selectionModalWidth + 3 + "px"
               }}
             >
-              <ConfirmDeleteModal setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} />
+              <ConfirmDeleteModal setSelectionModalIsOpen={setSelectionModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} categoryId={categoryId} itemId={id}/>
             </ModalWindow>
           ) : (
             <></>
@@ -60,7 +62,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
       ) : (
         <></>
       )}
-      <li key={id} id={`list_item_${id}`} className="pl-2" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}> {/* アイテム */}
+      <li key={id} id={`item_${id}`} className="pl-2" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}> {/* アイテム */}
           <div className="flex justify-start">
             {isHovering ? (
               <MoreHorizIcon 
@@ -112,13 +114,34 @@ const SelectionModalContent = ({ confirmDeleteModalIsOpen, setConfirmDeleteModal
   )
 }
 
-const ConfirmDeleteModal = ({ setConfirmDeleteModalIsOpen }: { setConfirmDeleteModalIsOpen: (isOpen: boolean) => void }) => {
+const ConfirmDeleteModal = ({ itemId, categoryId, setSelectionModalIsOpen, setConfirmDeleteModalIsOpen }: { itemId: string, categoryId: string, setSelectionModalIsOpen: (isOpen: boolean) => void, setConfirmDeleteModalIsOpen: (isOpen: boolean) => void }) => {
+  const cookies = useCookies();
+  const token = cookies.get("token");
+  const { items, setItems } = useContext(ItemsContext)
+  const handleDelete = async () => {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items/${itemId}`
+    console.log("url => ", url)
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "authorization": `Bearer ${token}`
+      }
+    })
+    console.log("res => ", res)
+    if (res.status === 204) {
+      setConfirmDeleteModalIsOpen(false)
+      setSelectionModalIsOpen(false)
+      setItems(items?.filter((item) => item.id !== itemId) ?? items) // 削除したアイテムを除外したitemsをセット
+    } else {
+      alert("エラーが発生しました。")
+    }
+  }
   return (
     <div className="flex flex-col p-2">
       <p className="text-slate-700 border-b border-slate-300 py-2 px-8">本当に削除しますか？</p>
       <div className="flex flex-row items-stretch justify-center">
         <button className="text-slate-700 w-1/2 pt-2 pb-2 border-r border-slate-300" onClick={() => setConfirmDeleteModalIsOpen(false)}>キャンセル</button>
-        <button className="text-red-500 w-1/2 pt-2 pb-2">削除</button>
+        <button className="text-red-500 w-1/2 pt-2 pb-2" onClick={handleDelete}>削除</button>
       </div>
     </div>
   )

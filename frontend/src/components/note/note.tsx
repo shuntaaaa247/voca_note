@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect } from "react";
-import useSWR from "swr";
 import InfiniteScroll from "react-infinite-scroller";
 import { useCookies } from 'next-client-cookies';
 import type { Item as ItemType } from "../../../../backend/generated/zod"
