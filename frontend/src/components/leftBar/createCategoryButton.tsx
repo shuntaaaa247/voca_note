@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCookies } from 'next-client-cookies';
 import { ModalWindow } from "../utils/modalWindow";
 import { Item } from "../../../../backend/generated/zod";
-
+import { UI_DATA } from "../../constants/uidata";
 export const CreateCategoryButton = () => {
   const router = useRouter()
   const cookies = useCookies();
@@ -40,7 +40,12 @@ export const CreateCategoryButton = () => {
     <>
       { modalIsOpen 
         ?  
-        <ModalWindow setModalIsOpen={setModalIsOpen}>
+        <ModalWindow 
+          setModalIsOpen={setModalIsOpen} 
+          screenClassName={UI_DATA.createCategoryModal.screenClassName} 
+          modalClassName={UI_DATA.createCategoryModal.modalClassName}
+          modalStyle={null}
+        >
           <form className='flex flex-col' onSubmit={handleSubmit}>
             <label>カテゴリー名</label>
             <input ref={categoryNameRef}></input>

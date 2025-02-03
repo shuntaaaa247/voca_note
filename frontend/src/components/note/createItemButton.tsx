@@ -5,6 +5,7 @@ import { useCookies } from 'next-client-cookies';
 import { ModalWindow } from '../utils/modalWindow';
 import { useParams } from 'next/navigation';
 import { ItemsContext } from './testNote';
+import { UI_DATA } from '../../constants/uidata';
 
 export const CreateItemButton = () => {
   const cookies = useCookies();
@@ -52,7 +53,12 @@ export const CreateItemButton = () => {
   return(
     <>
       { modalIsOpen 
-        ? <ModalWindow setModalIsOpen={setModalIsOpen} >
+        ? <ModalWindow 
+            setModalIsOpen={setModalIsOpen} 
+            screenClassName={UI_DATA.createItemModal.screenClassName} 
+            modalClassName={UI_DATA.createItemModal.modalClassName}
+            modalStyle={null}
+          >
             <form className='flex flex-col' onSubmit={handleSubmit}>
               <label>言葉</label>
               <input ref={wordRef}></input>
