@@ -83,7 +83,9 @@ export const TestNote = () => {
         <ul className="my-4 mx-2">
           {items?.map((item: ItemType) => {
             return (
-              <Item id={item.id} word={item.word} meaning={item.meaning} categoryId={item.categoryId} createdAt={item.createdAt} updatedAt={item.updatedAt} key={item.id}/>
+              <ItemsContext.Provider value={{ items, setItems }} key={item.id} >
+                <Item id={item.id} word={item.word} meaning={item.meaning} categoryId={item.categoryId} createdAt={item.createdAt} updatedAt={item.updatedAt} key={item.id}/>
+              </ItemsContext.Provider>
             )
           })}
         </ul>
