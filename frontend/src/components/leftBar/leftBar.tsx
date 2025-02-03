@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers'
 import { Suspense } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Category } from "../../../../backend/generated/zod";
 import { CreateCategoryButton } from './createCategoryButton';
 import { redirect } from 'next/navigation';
+import { LinkButton } from './LinkButton';
 redirect
 
 export const LeftBar = async () => {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const token = cookieStore.get("token")?.value
   const userId = cookieStore.get("userId")?.value
   let categories: Category[] = []
@@ -41,7 +41,8 @@ export const LeftBar = async () => {
       <Suspense fallback={<div>読み込み中...</div>}>
         {categories.map((category: Category) => {
           return (
-            <Link href={`/category/${category.id}`} className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">{category.categoryName}</Link>    
+            // <Link href={`/category/${category.id}`} className="w-[85%] py-1 px-2 my-2 mx-4 text-xl text-left text-slate-700 rounded-md hover:bg-slate-300">{category.categoryName}</Link>    
+            <LinkButton id={category.id} categoryName={category.categoryName} userId={category.userId} createdAt={category.createdAt} updatedAt={category.updatedAt}/>
           )
         })}
       </Suspense>

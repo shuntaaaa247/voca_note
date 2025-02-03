@@ -3,15 +3,15 @@ version: '3'
 services:
   frontend:
     build: 
-      context: ./frontend
+      context: ./frontend # Dockerfileがある場所
     volumes:
       - ./frontend:/app
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-    depends_on:
-      - backend
+    depends_on: # コンテナの依存関係を設定する(このコンテナ(frontend)より先に起動させるコンテナを設定する)
+      - backend # コンテナbackendがコンテナfrontendより先に起動するように設定している
 
   backend:
     build:

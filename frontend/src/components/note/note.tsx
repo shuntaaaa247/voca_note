@@ -49,9 +49,10 @@ export const Note = () => {
       <div className="basis-full ">
         <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">IT用語</h2>
         <InfiniteScroll
+          key="infinite-scroll" // ここにもkeyをつける
           loadMore={loadItems}
           hasMore={hasMore}
-          loader={<p>ロード中</p>}
+          loader={<p key="loader">ロード中</p>} // ここにもkeyをつける
           initialLoad={true}
           useWindow={false}
           >
@@ -73,13 +74,6 @@ export const Note = () => {
 const BlankList = () => {
   return (
     <>
-      <li className="pl-2 h-[70px]">
-        <div className="flex justify-start">
-          <span className="mr-5 w-7 h-7 rounded-full bg-slate-200 shadow-inner my-5"></span>
-          <div className="w-full border-b">
-          </div>
-        </div>
-      </li>
       <li className="pl-2 h-[70px]">
         <div className="flex justify-start">
           <span className="mr-5 w-7 h-7 rounded-full bg-slate-200 shadow-inner my-5"></span>
