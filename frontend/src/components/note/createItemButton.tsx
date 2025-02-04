@@ -3,6 +3,7 @@ import CreateIcon from '@mui/icons-material/Create'
 import { useState, useRef, useContext, useEffect } from 'react'
 import { useCookies } from 'next-client-cookies';
 import { ModalWindow } from '../utils/modalWindow';
+import { FormNoteLine } from '../utils/formNoteLine';
 import { useParams } from 'next/navigation';
 import { ItemsContext } from './testNote';
 import { UI_DATA } from '../../constants/uidata';
@@ -70,46 +71,39 @@ export const CreateItemButton = () => {
           >
             <form onSubmit={handleSubmit} className="flex flex-col w-full h-full bg-slate-50 rounded-xl shadow-md">
               <h1 className="text-center text-3xl text-blue-500 mt-3 mb-4">New Vocabulary</h1>
-              <div className="border-t flex h-10 py-1.5 mx-1">
-                <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
-              </div>
-              <div className="border-t flex h-10 mx-1">
-                <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50  rounded-full"></span>
+              <FormNoteLine>
+                <></>
+              </FormNoteLine>
+              <FormNoteLine>
                 <label className="pl-2 pt-3">・言葉</label>
-              </div>
-              <div className="flex border-t h-10 mx-1">
-                <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
+              </FormNoteLine>
+              <FormNoteLine>
                 <input ref={wordRef} type="text" placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none"/>
-              </div>
+              </FormNoteLine>
               { wordErrorMessage 
-              ? <div className="border-t flex h-10 mx-1">
-                  <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
+              ? <FormNoteLine>
                   <p className="pl-2 ml-4 pt-3 text-red-500">{wordErrorMessage}</p>
-                </div>
+                </FormNoteLine>
               : <></>
               }
-              <div className="border-t flex h-10 mx-1">
-                <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
+              <FormNoteLine>
                 <label className="pl-2 pt-3">・意味</label>
-              </div>
-              <div className="border-t flex h-10 mx-1">
-                <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
+              </FormNoteLine>
+              <FormNoteLine>
                 <input ref={meaningRef} type="text" placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none"/>
-              </div>
+              </FormNoteLine>
               { meaningErrorMessage 
-              ? <div className="border-t flex h-10 mx-1">
-                  <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
+              ? <FormNoteLine>
                   <p className="pl-2 ml-4 pt-3 text-red-500">{meaningErrorMessage}</p>
-                </div>
+                </FormNoteLine>
               : <></>
               }
-              <div className="border-t flex h-10 mx-1">
-                <span className="w-5 h-5 ml-2 my-auto shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
+              <FormNoteLine>
                 <button type="submit" className="border-blue-500 border-2 text-blue-500 text-lg px-3 my-0.5 mx-auto hover:bg-blue-500 hover:text-white">保存</button>
-              </div>
-              <div className="border-t border-b flex h-10 mx-1">
-                <span className="w-5 h-5 ml-2 my-2 shadow-inner bg-slate-200 bg-opacity-50 rounded-full"></span>
-              </div>
+              </FormNoteLine>
+              <FormNoteLine isDeepest={true}>
+                <></>
+              </FormNoteLine>
               <div className="h-14">
               </div>
             </form>
