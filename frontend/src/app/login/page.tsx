@@ -4,7 +4,7 @@ import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCookies } from 'next-client-cookies';
 import { User } from "../../../../backend/generated/zod"
-
+import { FormNoteLine } from "../../components/utils/formNoteLine"
 const Login = () => {
   const router = useRouter();
   const cookies = useCookies();
@@ -58,43 +58,34 @@ const Login = () => {
     <div className="flex w-[30%] mx-auto h-screen">
       <form onSubmit={handleSubmit} className="flex flex-col w-full my-auto bg-slate-50 rounded-xl shadow-md">
         <h1 className="text-center text-3xl mt-3 mb-4 font-sans">Login</h1>
-        <div className="border-t flex py-1.5 mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full "></span>
-        </div>
-        <div className="border-t flex mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full"></span>
+        <FormNoteLine>
+          <></>
+        </FormNoteLine>
+        <FormNoteLine>
           <label className="pl-2 pt-2">メールアドレス</label>
-        </div>
-        <div className="flex border-t mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full"></span>
+        </FormNoteLine>
+        <FormNoteLine>
           <input ref={emailRef} type="email" placeholder="voca@note.com" className="bg-slate-50 text-slate-700 pl-2 pt-2 w-full focus:outline-none"/>
-        </div>
-        <div className="border-t flex mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full"></span>
+        </FormNoteLine>
+        <FormNoteLine>
           <label className="pl-2 pt-2">パスワード</label>
-        </div>
-        <div className="flex border-t mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full"></span>
+        </FormNoteLine>
+        <FormNoteLine>
           <input ref={passwordRef} type="password" placeholder="パスワード" className="bg-slate-50 pl-2 pt-2 w-full focus:outline-none"/>
-        </div>
-        <div className="border-t flex mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full "></span>
-          {/* <button className="bg-blue-600 text-lg text-white rounded-lg hover:bg-blue-500 px-2 my-0.5 mx-auto">Login</button> */}
+        </FormNoteLine>
+        <FormNoteLine>
           <button type="submit" className="border-blue-500 border-2 text-blue-500 text-lg px-2 my-0.5 mx-auto hover:bg-blue-500 hover:text-white">Login</button>
-        </div>
+        </FormNoteLine>
         { errorMessage 
-        ? <div className="border-t flex mx-1">
-            <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full "></span>
+        ? <FormNoteLine>
             <p className="mx-auto text-red-500">{errorMessage}</p>
-          </div>
+          </FormNoteLine>
         : <></>
         }
-        <div className="border-t border-b flex mx-1">
-          <span className="w-5 h-5 ml-1 my-auto shadow-inner bg-slate-200 rounded-full"></span>
+        <FormNoteLine isDeepest={true}>
           <Link href={"http://localhost:3000/signup"} className="pl-2 pt-2 text-blue-500 text-sm mx-auto">アカウントをお持ちでない方</Link>
-        </div>
+        </FormNoteLine>
         <div className="h-14">
-          {/* <button className="bg-blue-600 text-lg px-3 py-2 my-1 text-white rounded-lg hover:bg-blue-500">Login</button> */}
         </div>
       </form>
     </div>
