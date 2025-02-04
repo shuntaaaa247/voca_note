@@ -46,7 +46,7 @@ export const TestNote = () => {
         } else {
           url = `${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items?cursor=${items.at(-1)?.createdAt}&limit=10`
         }
-        const res = await fetch(url, {
+        const res = await fetch(url, { // 本当はuseEffect内でのfetchはよくない
           method: "GET",
           headers: {
             "authorization": `Bearer ${token}`
