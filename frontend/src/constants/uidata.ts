@@ -1,6 +1,10 @@
 export const UI_DATA = {
   createItemModal: { // アイテム作成モーダル
     screenClassName: "fixed flex justify-center items-center top-0 left-0 w-full h-full bg-slate-100 bg-opacity-80 z-10",
+    modalClassName: "fixed w-[50%] bg-white  rounded-xl shadow-xl z-20"
+  },
+  editItemModal: { // アイテム作成モーダル
+    screenClassName: "fixed flex justify-center items-center top-0 left-0 w-full h-full bg-slate-100 bg-opacity-80 z-10",
     modalClassName: "fixed w-[50%] bg-white bg-opacity-50 rounded-xl shadow-xl z-20"
   },
   createCategoryModal: { // カテゴリ作成モーダル
