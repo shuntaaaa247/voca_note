@@ -276,6 +276,34 @@ describe("PATCH /categories/:categoryId/items/:itemId", () => {
       message: "アイテムが見つかりませんでした。"
     })
   })
+
+  test("should be an error due to empty word", async () => {
+    const response = await request(app).patch(`/categories/${testCategory1.id}/items/${testItem1.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        word: "",
+        meaning: `${testItem1.meaning}(Edited)`
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(400)
+    expect(response.body).toStrictEqual({
+      message: "word: Word is required"
+    })
+  })
+
+  test("should be an error due to empty meaning", async () => {
+    const response = await request(app).patch(`/categories/${testCategory1.id}/items/${testItem1.id}`)
+      .set("authorization", `Bearer ${token1}`)
+      .send({
+        word: `${testItem1.word}(Edited)`,
+        meaning: ""
+      })
+      .expect('Content-Type', "application/json; charset=utf-8")
+      .expect(400)
+    expect(response.body).toStrictEqual({
+      message: "meaning: Word is required"
+    })
+  })
 })
 
 describe("DELETE /categories/:categoryId/items/:itemId", () => {
