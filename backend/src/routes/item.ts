@@ -21,11 +21,11 @@ itemRouter.post("/:categoryId/items", async (req: Request, res: Response, next: 
     if (req.decoded.id !== category?.userId) {
       return res.status(403).json({ message: "権限がありません。" })
     }
-    const itemData = ItemSchema.omit({ id: true, createdAt: true, updatedAt: true }).parse({
+    const itemData = ItemSchema.omit({ id: true, createdAt: true, updatedAt: true }).parse({ //zod-prisma-typesで作成したバリデーションを使用するには、zodのparseメソッドを使用する
       word: req.body.word,
       meaning: req.body.meaning,
-      categoryId: category.id
-    });
+      categoryId: category.id // generated/zod/index.tsのItemSchemaにて、categoryIdはstring型で定義されているため、category.idはstring型である必要がある。つまり必須項目であるため、parseメソッドの引数には必ずcategoryIdを指定する必要がある
+    }); 
     const item: Item = await prisma.item.create({
       data: itemData
     });
@@ -106,21 +106,32 @@ itemRouter.patch("/:categoryId/items/:itemId", async (req: Request, res: Respons
     if (category.userId !== req.decoded.id) {
       return res.status(403).json({ message: "権限がありません。" })
     }
+
+    const itemData = ItemSchema.omit({ createdAt: true, updatedAt: true }).parse({//zod-prisma-typesで作成したバリデーションを使用するには、zodのparseメソッドを使用する
+      id: req.params.itemId,// generated/zod/index.tsのItemSchemaにて、idはstring型で定義されているため、req.params.itemIdはstring型である必要がある。つまり必須項目であるため、parseメソッドの引数には必ずidを指定する必要がある
+      word: req.body.word,
+      meaning: req.body.meaning,
+      categoryId: category.id// generated/zod/index.tsのItemSchemaにて、categoryIdはstring型で定義されているため、category.idはstring型である必要がある。つまり必須項目であるため、parseメソッドの引数には必ずcategoryIdを指定する必要がある
+    });
     
     const item: Item = await prisma.item.update({
       where: {
-        id: req.params.itemId,
-        categoryId: req.params.categoryId
+        id: itemData.id,
+        categoryId: itemData.categoryId
       },
       data: {
-        word: req.body.word,
-        meaning: req.body.meaning
+        word: itemData.word,
+        meaning: itemData.meaning,
       }
     })
     return res.status(200).json({ item })
   } catch(e) {
+    console.log(e)
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2025") {
       return res.status(404).json({ message: "アイテムが見つかりませんでした。" })
+    }
+    if (e instanceof z.ZodError) {
+      return res.status(400).json({ message: `${e.issues[0].path}: ${e.issues[0].message}`})
     }
     return res.status(500).json({ message: "予期せぬエラーが発生しました。"})
   }
