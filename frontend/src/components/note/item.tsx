@@ -3,9 +3,10 @@ import { useCookies } from 'next-client-cookies';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { ModalWindow } from "../utils/modalWindow";
+import { EditItemForm } from "./editItemForm";
 import { ItemsContext } from "./testNote";
 import type { Item as ItemProps } from "../../../../backend/generated/zod"
-import { ModalWindow } from "../utils/modalWindow";
 import { UI_DATA } from "../../constants/uidata";
 
 type selectionModalType = {
@@ -20,6 +21,10 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
     left: 0,
   });
   const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] = useState<boolean>(false);
+
+
+  const [editItemModalIsOpen, setEditItemModalIsOpen] = useState<boolean>(false);
+
 
   const getSelectionModalPosition = () => {
     const rect = document.getElementById(`item_${id}`)?.getBoundingClientRect();
@@ -41,7 +46,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
             modalClassName={UI_DATA.selectionModal.modalClassName}
             modalStyle={{top: selectionModalPosition.top + "px", left: selectionModalPosition.left + "px"}}
           >
-            <SelectionModalContent confirmDeleteModalIsOpen={confirmDeleteModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} />
+            <SelectionModalContent confirmDeleteModalIsOpen={confirmDeleteModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} editItemModalIsOpen={editItemModalIsOpen} setEditItemModalIsOpen={setEditItemModalIsOpen} />
           </ModalWindow>
           {confirmDeleteModalIsOpen ? (
             <ModalWindow // アイテム削除確認モーダル
@@ -63,29 +68,46 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
         <></>
       )}
       <li key={id} id={`item_${id}`} className="pl-2" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}> {/* アイテム */}
-          <div className="flex justify-start">
-            {isHovering ? (
-              <MoreHorizIcon 
-              className="text-slate-400 mr-5  w-7 h-7 rounded-full bg-slate-200 shadow-inner my-5 hover:cursor-grab"
-              onClick={() => getSelectionModalPosition()}
-              />
-            ) : (
-              <span className="mr-5 w-7 h-7 rounded-full bg-slate-200 shadow-inner my-5"></span>
-            )}
-            <div className="w-full border-b">
-              <p className="text-xl my-1 text-slate-700 font-medium">{word}</p>
-              <p className="text-xl my-1 text-slate-700 font-medium">{meaning}</p>
-            </div>
+        <div className="flex justify-start">
+          {isHovering ? (
+            <MoreHorizIcon 
+            className="text-slate-400 mr-5  w-7 h-7 rounded-full bg-slate-200 shadow-inner my-5 hover:cursor-grab"
+            onClick={() => getSelectionModalPosition()}
+            />
+          ) : (
+            <span className="mr-5 w-7 h-7 rounded-full bg-slate-200 shadow-inner my-5"></span>
+          )}
+          <div className="w-full border-b">
+            <p className="text-xl my-1 text-slate-700 font-medium">{word}</p>
+            <p className="text-xl my-1 text-slate-700 font-medium">{meaning}</p>
           </div>
-        </li>
+        </div>
+      </li>
+      {editItemModalIsOpen ? (
+        <EditItemModal itemId={id} word={word} meaning={meaning} categoryId={categoryId} setEditModalIsOpen={setEditItemModalIsOpen} />
+      ) : (
+        <></>
+      )}
     </>
   )
 }
 
-const SelectionModalContent = ({ confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen }: { confirmDeleteModalIsOpen: boolean,  setConfirmDeleteModalIsOpen: (isOpen: boolean) => void }) => {
+const SelectionModalContent = ({ 
+  confirmDeleteModalIsOpen, 
+  setConfirmDeleteModalIsOpen, 
+  setEditItemModalIsOpen 
+}: { 
+  confirmDeleteModalIsOpen: boolean, 
+  editItemModalIsOpen: boolean, 
+  setConfirmDeleteModalIsOpen: (isOpen: boolean) => void, 
+  setEditItemModalIsOpen: (isOpen: boolean) => void 
+}) => {
   const [isDeleteHovering, setIsDeleteHovering] = useState<boolean>(false);
   const handleDeleteHovering = () => {
     setIsDeleteHovering(!isDeleteHovering);
+  }
+  const handleEditClick = () => {
+    setEditItemModalIsOpen(true)
   }
 
   return (
@@ -102,7 +124,7 @@ const SelectionModalContent = ({ confirmDeleteModalIsOpen, setConfirmDeleteModal
           削除
         </span>
       </button>
-      <button className="flex flex-row items-center my-2">
+      <button onClick={handleEditClick} className="flex flex-row items-center my-2">
         <span className="mr-2 w-4 h-4 rounded-full bg-slate-200 shadow-inner"></span>
         <ModeEditOutlineOutlinedIcon className="mr-2"/>
         <span className="text-slate-700 pr-2">
@@ -144,5 +166,17 @@ const ConfirmDeleteModal = ({ itemId, categoryId, setSelectionModalIsOpen, setCo
         <button className="text-red-500 w-1/2 pt-2 pb-2" onClick={handleDelete}>削除</button>
       </div>
     </div>
+  )
+}
+
+const EditItemModal = ({ itemId, word, meaning, categoryId, setEditModalIsOpen }: { itemId: string, word: string, meaning: string, categoryId: string, setEditModalIsOpen: (isOpen: boolean) => void }) => {
+  return (
+    <ModalWindow  
+      setModalIsOpen={setEditModalIsOpen}
+      screenClassName={UI_DATA.editItemModal.screenClassName}
+      modalClassName={UI_DATA.editItemModal.modalClassName}
+    >
+      <EditItemForm itemId={itemId} word={word} meaning={meaning} categoryId={categoryId} setEditModalIsOpen={setEditModalIsOpen} />
+    </ModalWindow>
   )
 }

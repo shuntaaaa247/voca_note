@@ -9,7 +9,7 @@ type Props = {
   setModalIsOpen: (value: boolean) => void
   screenClassName: string
   modalClassName: string
-  modalStyle: ModalStyle | null
+  modalStyle?: ModalStyle | null
   children: ReactNode
 }
 
