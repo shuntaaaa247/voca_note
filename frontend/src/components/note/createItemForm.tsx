@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useRef, useState, useEffect } from "react";
 import { useCookies } from 'next-client-cookies';
 import { useParams } from 'next/navigation';
 import { FormNoteLine } from "../utils/formNoteLine";
@@ -18,6 +18,10 @@ export const CreateItemForm = ({
   const { items, setItems } = useContext(ItemsContext);
   const params = useParams()
   const categoryId = params.categoryId;
+
+  useEffect(() => {
+    wordRef.current?.focus();
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

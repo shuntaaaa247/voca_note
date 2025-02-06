@@ -1,4 +1,4 @@
-import { useRef, useState, useContext } from "react"
+import { useRef, useState, useEffect, useContext } from "react"
 import { useCookies } from 'next-client-cookies';
 import { ItemsContext } from "./testNote";
 import { FormNoteLine } from "../utils/formNoteLine"
@@ -8,12 +8,14 @@ export const EditItemForm = ({
   word,
   meaning,
   categoryId,
+  setSelectionModalIsOpen,
   setEditModalIsOpen,
 }:{
   itemId: string,
   word: string,
   meaning: string,
   categoryId: string,
+  setSelectionModalIsOpen: (isOpen: boolean) => void,
   setEditModalIsOpen: (isOpen: boolean) => void
 }) => {
   const cookies = useCookies();
@@ -23,6 +25,10 @@ export const EditItemForm = ({
   const [wordErrorMessage, setWordErrorMessage] = useState<string>("") ;
   const [meaningErrorMessage, setMeaningErrorMessage] = useState<string>("");
   const { items, setItems } = useContext(ItemsContext);
+
+  useEffect(() => {
+    wordRef.current?.focus();
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -45,6 +51,8 @@ export const EditItemForm = ({
       setItems(updatedItems);
 
       setEditModalIsOpen(false)
+      setSelectionModalIsOpen(false)
+
     } else if (resJson.message) {
       if (resJson.message.includes("word")) {
         setWordErrorMessage(resJson.message)
@@ -54,7 +62,6 @@ export const EditItemForm = ({
         setMeaningErrorMessage(resJson.message)
       }
     }
-    // setEditModalIsOpen(false)
   }
 
   return(

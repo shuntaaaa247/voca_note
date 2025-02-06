@@ -84,7 +84,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
         </div>
       </li>
       {editItemModalIsOpen ? (
-        <EditItemModal itemId={id} word={word} meaning={meaning} categoryId={categoryId} setEditModalIsOpen={setEditItemModalIsOpen} />
+        <EditItemModal itemId={id} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditItemModalIsOpen} />
       ) : (
         <></>
       )}
@@ -169,14 +169,14 @@ const ConfirmDeleteModal = ({ itemId, categoryId, setSelectionModalIsOpen, setCo
   )
 }
 
-const EditItemModal = ({ itemId, word, meaning, categoryId, setEditModalIsOpen }: { itemId: string, word: string, meaning: string, categoryId: string, setEditModalIsOpen: (isOpen: boolean) => void }) => {
+const EditItemModal = ({ itemId, word, meaning, categoryId, setSelectionModalIsOpen, setEditModalIsOpen }: { itemId: string, word: string, meaning: string, categoryId: string, setSelectionModalIsOpen: (isOpen: boolean) => void, setEditModalIsOpen: (isOpen: boolean) => void }) => {
   return (
     <ModalWindow  
       setModalIsOpen={setEditModalIsOpen}
       screenClassName={UI_DATA.editItemModal.screenClassName}
       modalClassName={UI_DATA.editItemModal.modalClassName}
     >
-      <EditItemForm itemId={itemId} word={word} meaning={meaning} categoryId={categoryId} setEditModalIsOpen={setEditModalIsOpen} />
+      <EditItemForm itemId={itemId} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditModalIsOpen} />
     </ModalWindow>
   )
 }
