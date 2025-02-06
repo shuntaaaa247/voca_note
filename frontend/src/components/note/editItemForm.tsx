@@ -1,5 +1,6 @@
-import { useRef, useState } from "react"
+import { useRef, useState, useContext } from "react"
 import { useCookies } from 'next-client-cookies';
+import { ItemsContext } from "./testNote";
 import { FormNoteLine } from "../utils/formNoteLine"
 
 export const EditItemForm = ({
@@ -21,6 +22,7 @@ export const EditItemForm = ({
   const meaningRef = useRef<HTMLInputElement>(null);
   const [wordErrorMessage, setWordErrorMessage] = useState<string>("") ;
   const [meaningErrorMessage, setMeaningErrorMessage] = useState<string>("");
+  const { items, setItems } = useContext(ItemsContext);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -38,6 +40,10 @@ export const EditItemForm = ({
 
     const resJson = await res.json();
     if (resJson.item) {
+      // 編集したアイテムをitemsの中で更新
+      const updatedItems = items?.map(item => item.id === itemId ? resJson.item : item);
+      setItems(updatedItems);
+
       setEditModalIsOpen(false)
     } else if (resJson.message) {
       if (resJson.message.includes("word")) {
