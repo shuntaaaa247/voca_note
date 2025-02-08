@@ -5,7 +5,7 @@ import { Category } from "../../../../backend/generated/zod";
 import { CreateCategoryButton } from './createCategoryButton';
 import { redirect } from 'next/navigation';
 import { LinkButton } from './LinkButton';
-redirect
+// redirect
 
 export const LeftBar = async () => {
   const cookieStore = await cookies()
@@ -14,7 +14,8 @@ export const LeftBar = async () => {
   let categories: Category[] = []
 
   // const url: string = `${process.env.NEXT_PUBLIC_API_URL}/categories`
-  const url: string = `http://backend:5000/categories`
+  // const url: string = `http://backend:5000/categories`
+  const url: string = `${process.env.NEXT_PUBLIC_API_URL_FOR_LEFTBAR}/categories`
 
   const response = await fetch(url, {
     method: "GET",
@@ -35,8 +36,9 @@ export const LeftBar = async () => {
   }
 
   return(
-    <div className="flex flex-col h-screen basis-1/6 sticky top-0">
+    <div className="flex flex-col h-screen basis-1/6 w-1/6 sticky top-0">
       <h1 className="text-3xl m-2 mb-10 font-thin">VOCA NOTE</h1>
+      {/* {`${process.env.NEXT_PUBLIC_API_URL}/categories`} */}
       <CreateCategoryButton />
       <Suspense fallback={<div>読み込み中...</div>}>
         {categories.map((category: Category) => {
