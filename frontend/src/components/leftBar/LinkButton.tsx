@@ -7,12 +7,13 @@ import { ModalWindow } from "../utils/modalWindow";
 import { UI_DATA } from "../../constants/uidata";
 import { SelectionModalContent } from "../utils/SelectionModalContent";
 import { ConfirmDeleteModalContent } from "../utils/ConfirmDeleteModalContent";
+import { EditCategoryNameForm } from "./editCategoryNameForm";
 
 export const LinkButton = ({ id, userId, categoryName, createdAt, updatedAt }: Category) => {
   const [isHovering, setIsHovering] = useState<boolean>(false)
   const [selectionModalIsOpen, setSelectionModalIsOpen] = useState<boolean>(false);
   const [confirmDeleteModalIsOpen, setConfirmDeleteModalIsOpen] = useState<boolean>(false);
-  const [editItemModalIsOpen, setEditItemModalIsOpen] = useState<boolean>(false);
+  const [editCategoryNameModalIsOpen, setEditCategoryNameModalIsOpen] = useState<boolean>(false);
   const [linkButtonPosition, setLinkButtonPosition] = useState<{top: number, left: number, width: number}>({
     top: 0, 
     left: 0,
@@ -58,7 +59,7 @@ export const LinkButton = ({ id, userId, categoryName, createdAt, updatedAt }: C
             modalClassName={UI_DATA.selectionModal.modalClassName}
             modalStyle={{top: linkButtonPosition.top + "px", left: linkButtonPosition.left + linkButtonPosition.width + "px"}}
           >
-            <SelectionModalContent confirmDeleteModalIsOpen={confirmDeleteModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} editItemModalIsOpen={editItemModalIsOpen} setEditItemModalIsOpen={setEditItemModalIsOpen} />
+            <SelectionModalContent confirmDeleteModalIsOpen={confirmDeleteModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} editModalIsOpen={editCategoryNameModalIsOpen} setEditModalIsOpen={setEditCategoryNameModalIsOpen} />
           </ModalWindow>
           {confirmDeleteModalIsOpen ? (
             <ModalWindow // アイテム削除確認モーダル
@@ -76,6 +77,17 @@ export const LinkButton = ({ id, userId, categoryName, createdAt, updatedAt }: C
             <></>
           )}
         </>
+      ) : (
+        <></>
+      )}
+      {editCategoryNameModalIsOpen ? (
+        <ModalWindow // カテゴリ名編集モーダル
+          setModalIsOpen={setEditCategoryNameModalIsOpen}
+          screenClassName={UI_DATA.editCategoryNameModal.screenClassName}
+          modalClassName={UI_DATA.editCategoryNameModal.modalClassName}
+        >
+          <EditCategoryNameForm categoryId={id} categoryName={categoryName} setEditCategoryNameModalIsOpen={setEditCategoryNameModalIsOpen} setSelectionModalIsOpen={setSelectionModalIsOpen} />
+        </ModalWindow>
       ) : (
         <></>
       )}

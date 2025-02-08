@@ -8,20 +8,21 @@ import { EditItemForm } from "../note/editItemForm";
 
 export const SelectionModalContent = ({ 
   confirmDeleteModalIsOpen, 
+  editModalIsOpen,
   setConfirmDeleteModalIsOpen, 
-  setEditItemModalIsOpen 
+  setEditModalIsOpen 
 }: { 
   confirmDeleteModalIsOpen: boolean, 
-  editItemModalIsOpen: boolean, 
+  editModalIsOpen: boolean, 
   setConfirmDeleteModalIsOpen: (isOpen: boolean) => void, 
-  setEditItemModalIsOpen: (isOpen: boolean) => void 
+  setEditModalIsOpen: (isOpen: boolean) => void 
 }) => {
   const [isDeleteHovering, setIsDeleteHovering] = useState<boolean>(false);
   const handleDeleteHovering = () => {
     setIsDeleteHovering(!isDeleteHovering);
   }
   const handleEditClick = () => {
-    setEditItemModalIsOpen(true)
+    setEditModalIsOpen(true)
   }
 
   return (

@@ -42,7 +42,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
             modalClassName={UI_DATA.selectionModal.modalClassName}
             modalStyle={{top: selectionModalPosition.top + "px", left: selectionModalPosition.left + "px"}}
           >
-            <SelectionModalContent confirmDeleteModalIsOpen={confirmDeleteModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} editItemModalIsOpen={editItemModalIsOpen} setEditItemModalIsOpen={setEditItemModalIsOpen} />
+            <SelectionModalContent confirmDeleteModalIsOpen={confirmDeleteModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} editModalIsOpen={editItemModalIsOpen} setEditModalIsOpen={setEditItemModalIsOpen} />
           </ModalWindow>
           {confirmDeleteModalIsOpen ? (
             <ModalWindow // アイテム削除確認モーダル
