@@ -1,14 +1,10 @@
-import { useState, useContext } from "react"
-import { useCookies } from 'next-client-cookies';
+import { useState } from "react"
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { ModalWindow } from "../utils/modalWindow";
-import { EditItemForm } from "./editItemForm";
-import { ItemsContext } from "./testNote";
 import type { Item as ItemProps } from "../../../../backend/generated/zod"
 import { UI_DATA } from "../../constants/uidata";
-
+import { SelectionModalContent, EditItemModalContent } from "../utils/SelectionModalContent";
+import { ConfirmDeleteModalContent } from "../utils/ConfirmDeleteModalContent";
 type selectionModalType = {
   top: number | undefined
   left: number | undefined
@@ -58,7 +54,7 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
                 left: (selectionModalPosition.left ?? 0) + UI_DATA.selectionModalWidth + 3 + "px"
               }}
             >
-              <ConfirmDeleteModal setSelectionModalIsOpen={setSelectionModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} categoryId={categoryId} itemId={id}/>
+              <ConfirmDeleteModalContent setSelectionModalIsOpen={setSelectionModalIsOpen} setConfirmDeleteModalIsOpen={setConfirmDeleteModalIsOpen} categoryId={categoryId} itemId={id} url={`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items/${id}`}/>
             </ModalWindow>
           ) : (
             <></>
@@ -84,99 +80,10 @@ export const Item = ( { id, word, meaning, categoryId, createdAt, updatedAt } : 
         </div>
       </li>
       {editItemModalIsOpen ? (
-        <EditItemModal itemId={id} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditItemModalIsOpen} />
+        <EditItemModalContent itemId={id} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditItemModalIsOpen} />
       ) : (
         <></>
       )}
     </>
-  )
-}
-
-const SelectionModalContent = ({ 
-  confirmDeleteModalIsOpen, 
-  setConfirmDeleteModalIsOpen, 
-  setEditItemModalIsOpen 
-}: { 
-  confirmDeleteModalIsOpen: boolean, 
-  editItemModalIsOpen: boolean, 
-  setConfirmDeleteModalIsOpen: (isOpen: boolean) => void, 
-  setEditItemModalIsOpen: (isOpen: boolean) => void 
-}) => {
-  const [isDeleteHovering, setIsDeleteHovering] = useState<boolean>(false);
-  const handleDeleteHovering = () => {
-    setIsDeleteHovering(!isDeleteHovering);
-  }
-  const handleEditClick = () => {
-    setEditItemModalIsOpen(true)
-  }
-
-  return (
-    <div className="flex flex-col py-2">
-      <button 
-        onMouseEnter={handleDeleteHovering} 
-        onMouseLeave={handleDeleteHovering} 
-        className="flex flex-row items-center mt-2 pb-2 border-b border-slate-300 hover"
-        onClick={() => setConfirmDeleteModalIsOpen(true)}
-      >
-        <span className="mr-2 w-4 h-4 rounded-full bg-slate-200 shadow-inner"></span>
-        <DeleteOutlineOutlinedIcon className={`mr-2 ${isDeleteHovering || confirmDeleteModalIsOpen ? "text-red-500" : "text-slate-700"}`}/>
-        <span className={`${isDeleteHovering || confirmDeleteModalIsOpen ? "text-red-500" : "text-slate-700"} pr-2`}>
-          削除
-        </span>
-      </button>
-      <button onClick={handleEditClick} className="flex flex-row items-center my-2">
-        <span className="mr-2 w-4 h-4 rounded-full bg-slate-200 shadow-inner"></span>
-        <ModeEditOutlineOutlinedIcon className="mr-2"/>
-        <span className="text-slate-700 pr-2">
-          編集
-        </span>
-      </button>
-    </div>
-
-  )
-}
-
-const ConfirmDeleteModal = ({ itemId, categoryId, setSelectionModalIsOpen, setConfirmDeleteModalIsOpen }: { itemId: string, categoryId: string, setSelectionModalIsOpen: (isOpen: boolean) => void, setConfirmDeleteModalIsOpen: (isOpen: boolean) => void }) => {
-  const cookies = useCookies();
-  const token = cookies.get("token");
-  const { items, setItems } = useContext(ItemsContext)
-  const handleDelete = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items/${itemId}`
-    console.log("url => ", url)
-    const res = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        "authorization": `Bearer ${token}`
-      }
-    })
-    console.log("res => ", res)
-    if (res.status === 204) {
-      setConfirmDeleteModalIsOpen(false)
-      setSelectionModalIsOpen(false)
-      setItems(items?.filter((item) => item.id !== itemId) ?? items) // 削除したアイテムを除外したitemsをセット
-    } else {
-      alert("エラーが発生しました。")
-    }
-  }
-  return (
-    <div className="flex flex-col p-2">
-      <p className="text-slate-700 border-b border-slate-300 py-2 px-8">本当に削除しますか？</p>
-      <div className="flex flex-row items-stretch justify-center">
-        <button className="text-slate-700 w-1/2 pt-2 pb-2 border-r border-slate-300" onClick={() => setConfirmDeleteModalIsOpen(false)}>キャンセル</button>
-        <button className="text-red-500 w-1/2 pt-2 pb-2" onClick={handleDelete}>削除</button>
-      </div>
-    </div>
-  )
-}
-
-const EditItemModal = ({ itemId, word, meaning, categoryId, setSelectionModalIsOpen, setEditModalIsOpen }: { itemId: string, word: string, meaning: string, categoryId: string, setSelectionModalIsOpen: (isOpen: boolean) => void, setEditModalIsOpen: (isOpen: boolean) => void }) => {
-  return (
-    <ModalWindow  
-      setModalIsOpen={setEditModalIsOpen}
-      screenClassName={UI_DATA.editItemModal.screenClassName}
-      modalClassName={UI_DATA.editItemModal.modalClassName}
-    >
-      <EditItemForm itemId={itemId} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditModalIsOpen} />
-    </ModalWindow>
   )
 }
