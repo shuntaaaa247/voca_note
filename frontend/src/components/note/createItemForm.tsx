@@ -1,8 +1,11 @@
-import { useContext, useRef, useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useCookies } from 'next-client-cookies';
 import { useParams } from 'next/navigation';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, SubmitHandler } from "react-hook-form"
 import { FormNoteLine } from "../utils/formNoteLine";
 import { ItemsContext } from "./testNote";
+import { ItemFormSchema, ItemFormType } from "../utils/formType";
 
 export const CreateItemForm = ({
   setModalIsOpen,
@@ -11,20 +14,16 @@ export const CreateItemForm = ({
 }) => {
   const cookies = useCookies();
   const token = cookies.get("token");
-  const wordRef = useRef<HTMLInputElement>(null);
-  const meaningRef = useRef<HTMLInputElement>(null);
-  const [wordErrorMessage, setWordErrorMessage] = useState<string>("") ;
-  const [meaningErrorMessage, setMeaningErrorMessage] = useState<string>("")
   const { items, setItems } = useContext(ItemsContext);
-  const params = useParams()
+  const params = useParams();
   const categoryId = params.categoryId;
 
-  useEffect(() => {
-    wordRef.current?.focus();
-  }, [])
+  const { register, handleSubmit, formState: { errors }, setFocus } = useForm<ItemFormType>({ //zodで定義したスキーマから取り出した型を設定する
+    resolver: zodResolver(ItemFormSchema) //zodで定義したスキーマでバリデーションするため
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const onSubmit: SubmitHandler<ItemFormType> = async (inputData) => { //zodのバリデーションが通った時だけ実行される
+    console.log(inputData);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items`, {
       method: "POST",
       headers: {
@@ -32,8 +31,8 @@ export const CreateItemForm = ({
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify({
-        word: wordRef.current?.value,
-        meaning: meaningRef.current?.value
+        word: inputData.word,
+        meaning: inputData.meaning
       }),
     })
 
@@ -42,22 +41,19 @@ export const CreateItemForm = ({
       setItems([...items ?? [], resJson.item])
       setModalIsOpen(false)
     } else if (resJson.message) {
-      setWordErrorMessage("");
-      setMeaningErrorMessage("")
-      if (resJson.message.includes("word")) {
-        setWordErrorMessage(resJson.message)
-      } else if (resJson.message.includes("meaning")) {
-        setMeaningErrorMessage(resJson.message)
-      } else {
-        setMeaningErrorMessage(resJson.message)
-        console.log("エラーが発生しました\n" + resJson.message)
-        alert("エラーが発生しました\n" + resJson.message)
-      }
+      console.log("エラーが発生しました\n" + resJson.message)
+      alert("エラーが発生しました\n" + resJson.message)
     }
-  }
+  };
+
+  console.log("errors", errors);
+
+  useEffect(() => {
+    setFocus("word"); // useFormのsetFocusを使って、フォーカスを当てる
+  }, [])
 
   return(
-    <form onSubmit={handleSubmit} className="flex flex-col w-full h-full bg-slate-50 rounded-xl shadow-md">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full bg-slate-50 rounded-xl shadow-md">
       <h1 className="text-center text-3xl text-blue-500 mt-6 mb-4">New Vocabulary</h1>
       <FormNoteLine>
         <></>
@@ -66,11 +62,11 @@ export const CreateItemForm = ({
         <label className="pl-2 pt-3">・言葉</label>
       </FormNoteLine>
       <FormNoteLine>
-        <input ref={wordRef} type="text" placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none"/>
+        <input type="text" placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("word")} />
       </FormNoteLine>
-      { wordErrorMessage 
+      { errors.word?.message 
       ? <FormNoteLine>
-          <p className="pl-2 ml-4 pt-3 text-red-500">{wordErrorMessage}</p>
+          <p className="pl-2 ml-4 pt-3 text-red-500">{errors.word.message}</p>
         </FormNoteLine>
       : <></>
       }
@@ -78,11 +74,11 @@ export const CreateItemForm = ({
         <label className="pl-2 pt-3">・意味</label>
       </FormNoteLine>
       <FormNoteLine>
-        <input ref={meaningRef} type="text" placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none"/>
+        <input type="text" placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("meaning")} />
       </FormNoteLine>
-      { meaningErrorMessage 
+        { errors.meaning?.message 
       ? <FormNoteLine>
-          <p className="pl-2 ml-4 pt-3 text-red-500">{meaningErrorMessage}</p>
+          <p className="pl-2 ml-4 pt-3 text-red-500">{errors.meaning.message}</p>
         </FormNoteLine>
       : <></>
       }
