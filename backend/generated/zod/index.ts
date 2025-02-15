@@ -46,7 +46,7 @@ export type User = z.infer<typeof UserSchema>
 
 export const CategorySchema = z.object({
   id: z.string().uuid(),
-  categoryName: z.string().min(1, { message: "categoryName is required" }).max(200, { message: "Must be 200 or fewer characters long" }),
+  categoryName: z.string().min(1, { message: "categoryName is required" }).max(200, { message: "Must be 100 or fewer characters long" }),
   userId: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
