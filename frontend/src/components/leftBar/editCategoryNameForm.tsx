@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCookies } from 'next-client-cookies';
 import { CategoryFormSchema, CategoryFormType} from "../utils/formType";
 import { useRouter } from "next/navigation";
-import { FormNoteLine } from "../utils/formNoteLine";
+import { FormNoteLine } from "../utils/FormNoteLine";
 
 export const EditCategoryNameForm = ({ 
   categoryId,

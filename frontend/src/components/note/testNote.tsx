@@ -5,8 +5,8 @@ import useSWR from 'swr';
 import { useCookies } from 'next-client-cookies';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Item as ItemType } from "../../../../backend/generated/zod"
-import { Item } from "./item"
-import { CreateItemButton } from "./createItemButton"
+import { Item } from "./Item"
+import { CreateItemButton } from "./CreateItemButton"
 
 export const ItemsContext = createContext({} as {
   items: ItemType[] | undefined,
@@ -74,26 +74,25 @@ export const TestNote = () => {
   }, [items?.length ?? null, hasMore])
 
   return (
-    <div className="basis-5/6 flex justify-start my-5 py-20 mr-3 rounded-3xl shadow-xl overflow-auto bg-slate-50">
-      <div className="basis-full ">
-        { _isLoading
-        ? <CircularProgress />
-        :  <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">{ categoryData?.category.categoryName }</h2>
-        }
-        <ul className="my-4 mx-2">
-          {items?.map((item: ItemType) => {
-            return (
-              <ItemsContext.Provider value={{ items, setItems }} key={item.id} >
-                <Item id={item.id} word={item.word} meaning={item.meaning} categoryId={item.categoryId} createdAt={item.createdAt} updatedAt={item.updatedAt} key={item.id}/>
-              </ItemsContext.Provider>
-            )
-          })}
-        </ul>
-        <ItemsContext.Provider value={{ items, setItems }} >
+    <ItemsContext.Provider value={{ items, setItems }}>
+      <div className="basis-5/6 flex justify-start my-5 py-20 mr-3 rounded-3xl shadow-xl overflow-auto bg-slate-50">
+        <div className="basis-full ">
+          { _isLoading
+          ? <CircularProgress />
+          :  <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">{ categoryData?.category.categoryName }</h2>
+          }
+          <ul className="my-4 mx-2">
+            {items?.map((item: ItemType) => {
+              return (
+                // <Item id={item.id} word={item.word} meaning={item.meaning} categoryId={item.categoryId} createdAt={item.createdAt} updatedAt={item.updatedAt} key={item.id}/>
+                <Item {...item} key={item.id}/>
+              )
+            })}
+          </ul>
           <CreateItemButton />
-        </ItemsContext.Provider>
-        <div ref={loadingRef} className='flex justify-center'>{ isLoading ? <CircularProgress /> : <></>}</div>
+          <div ref={loadingRef} className='flex justify-center'>{ isLoading ? <CircularProgress /> : <></>}</div>
+        </div>
       </div>
-    </div>
+    </ItemsContext.Provider>
   )
 }

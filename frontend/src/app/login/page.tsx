@@ -4,8 +4,8 @@ import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCookies } from 'next-client-cookies';
 import { User } from "../../../../backend/generated/zod"
-import { FormNoteLine } from "../../components/utils/formNoteLine"
-const Login = () => {
+import { FormNoteLine } from "@/components/utils/FormNoteLine"
+export const Login = () => {
   const router = useRouter();
   const cookies = useCookies();
   const emailRef = useRef<HTMLInputElement>(null);
@@ -19,7 +19,7 @@ const Login = () => {
       const email: String | undefined = emailRef.current?.value;
       const password: String | undefined = passwordRef.current?.value
 
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json;charset=utf-8",

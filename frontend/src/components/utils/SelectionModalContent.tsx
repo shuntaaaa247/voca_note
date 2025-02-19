@@ -1,10 +1,10 @@
 import { useState } from "react";
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { ModalWindow } from "./modalWindow";
-import { UI_DATA } from "../../constants/uidata";
-import { EditItemForm } from "../note/editItemForm";
-
+// import { ModalWindow } from "./ModalWindow";
+// import { UI_DATA } from "../../constants/uidata";
+// import { EditItemForm } from "../note/EditItemForm";
+// import type { Item as ItemType } from "../../../../backend/generated/zod"
 
 export const SelectionModalContent = ({ 
   confirmDeleteModalIsOpen, 
@@ -26,7 +26,7 @@ export const SelectionModalContent = ({
   }
 
   return (
-    <div className="flex flex-col py-2">
+    <div data-testid="SelectionModalContent" className="flex flex-col py-2">
       <button 
         onMouseEnter={handleDeleteHovering} 
         onMouseLeave={handleDeleteHovering} 
@@ -51,28 +51,23 @@ export const SelectionModalContent = ({
   )
 }
 
-export const EditItemModalContent = ({ 
-  itemId, 
-  word, 
-  meaning, 
-  categoryId, 
-  setSelectionModalIsOpen, 
-  setEditModalIsOpen 
-}: { 
-  itemId: string, 
-  word: string, 
-  meaning: string, 
-  categoryId: string, 
-  setSelectionModalIsOpen: (isOpen: boolean) => void, 
-  setEditModalIsOpen: (isOpen: boolean) => void 
-}) => {
-  return (
-    <ModalWindow  
-      setModalIsOpen={setEditModalIsOpen}
-      screenClassName={UI_DATA.editItemModal.screenClassName}
-      modalClassName={UI_DATA.editItemModal.modalClassName}
-    >
-      <EditItemForm itemId={itemId} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditModalIsOpen} />
-    </ModalWindow>
-  )
-}
+// export const EditItemModalContent = ({ 
+//   item,
+//   setSelectionModalIsOpen, 
+//   setEditModalIsOpen 
+// }: { 
+//   item: ItemType, 
+//   setSelectionModalIsOpen: (isOpen: boolean) => void, 
+//   setEditModalIsOpen: (isOpen: boolean) => void 
+// }) => {
+//   return (
+//     <ModalWindow  
+//       setModalIsOpen={setEditModalIsOpen}
+//       screenClassName={UI_DATA.editItemModal.screenClassName}
+//       modalClassName={UI_DATA.editItemModal.modalClassName}
+//     >
+//       {/* <EditItemForm itemId={itemId} word={word} meaning={meaning} categoryId={categoryId} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditModalIsOpen} /> */}
+//       <EditItemForm item={item} setSelectionModalIsOpen={setSelectionModalIsOpen} setEditModalIsOpen={setEditModalIsOpen} />
+//     </ModalWindow>
+//   )
+// }

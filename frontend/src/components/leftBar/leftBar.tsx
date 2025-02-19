@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers'
 import { Suspense } from 'react';
 import { Category } from "../../../../backend/generated/zod";
-import { CreateCategoryButton } from './createCategoryButton';
+import { CreateCategoryButton } from './CreateCategoryButton';
 import { redirect } from 'next/navigation';
 import { LinkButton } from './LinkButton';
 // redirect

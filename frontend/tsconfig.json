@@ -26,15 +26,22 @@
         "./src/*"
       ]
     },
-    "target": "ES2017"
+    "target": "ES2017",
+    "types": ["@types/jest", "node"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/__test__/**/*.ts",
+    "src/__test__/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "out", // 以下4つはテスト追加時に追加
+    ".next",
+    // "**/*.test.ts",
+    // "**/*.test.tsx"
   ]
 }

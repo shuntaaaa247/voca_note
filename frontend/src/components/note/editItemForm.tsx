@@ -2,22 +2,17 @@ import { useEffect, useContext } from "react"
 import { useCookies } from 'next-client-cookies';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ItemsContext } from "./testNote";
-import { FormNoteLine } from "../utils/formNoteLine"
+import { ItemsContext } from "./TestNote";
+import { FormNoteLine } from "../utils/FormNoteLine"
 import { ItemFormSchema, ItemFormType } from "../utils/formType";
+import type { Item } from "../../../../backend/generated/zod"
 
 export const EditItemForm = ({
-  itemId,
-  word,
-  meaning,
-  categoryId,
+  item,
   setSelectionModalIsOpen,
   setEditModalIsOpen,
 }:{
-  itemId: string,
-  word: string,
-  meaning: string,
-  categoryId: string,
+  item: Item,
   setSelectionModalIsOpen: (isOpen: boolean) => void,
   setEditModalIsOpen: (isOpen: boolean) => void
 }) => {
@@ -33,7 +28,7 @@ export const EditItemForm = ({
 
   const onSubmit: SubmitHandler<ItemFormType> = async (inputData) => {
     console.log(inputData);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items/${itemId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${item.categoryId}/items/${item.id}`, {
       method: "PATCH",
       headers: {
         "authorization": `Bearer ${token}`,
@@ -48,7 +43,7 @@ export const EditItemForm = ({
     const resJson = await res.json();
     if (resJson.item) {
       // 編集したアイテムをitemsの中で更新
-      const updatedItems = items?.map(item => item.id === itemId ? resJson.item : item);
+      const updatedItems = items?.map(item => item.id === item.id ? resJson.item : item);
       setItems(updatedItems);
 
       setEditModalIsOpen(false)
@@ -74,7 +69,7 @@ export const EditItemForm = ({
         <label className="pl-2 pt-3">・言葉</label>
       </FormNoteLine>
       <FormNoteLine>
-        <input type="text" defaultValue={word} placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("word")} />
+        <input type="text" defaultValue={item.word} placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("word")} />
       </FormNoteLine>
       { errors.word?.message 
       ? <FormNoteLine>
@@ -86,7 +81,7 @@ export const EditItemForm = ({
         <label className="pl-2 pt-3">・意味</label>
       </FormNoteLine>
       <FormNoteLine>
-        <input type="text" defaultValue={meaning} placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("meaning")} />
+        <input type="text" defaultValue={item.meaning} placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("meaning")} />
       </FormNoteLine>
       { errors.meaning?.message 
       ? <FormNoteLine>

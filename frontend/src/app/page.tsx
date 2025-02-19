@@ -1,4 +1,4 @@
-import { LeftBar } from "@/components/leftBar/leftBar"
+import { LeftBar } from "@/components/leftBar/LeftBar"
 import { Note } from "@/components/note/note"
 
 export default function Home() {

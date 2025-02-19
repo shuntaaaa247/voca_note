@@ -3,11 +3,11 @@ import Link from "next/link"
 import { useState } from "react"
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Category } from "../../../../backend/generated/zod"
-import { ModalWindow } from "../utils/modalWindow";
+import { ModalWindow } from "../utils/ModalWindow";
 import { UI_DATA } from "../../constants/uidata";
 import { SelectionModalContent } from "../utils/SelectionModalContent";
 import { ConfirmDeleteModalContent } from "../utils/ConfirmDeleteModalContent";
-import { EditCategoryNameForm } from "./editCategoryNameForm";
+import { EditCategoryNameForm } from "./EditCategoryNameForm";
 
 export const LinkButton = ({ id, userId, categoryName, createdAt, updatedAt }: Category) => {
   const [isHovering, setIsHovering] = useState<boolean>(false)

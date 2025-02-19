@@ -12,6 +12,8 @@ services:
       - NODE_ENV=development
     depends_on: # コンテナの依存関係を設定する(このコンテナ(frontend)より先に起動させるコンテナを設定する)
       - backend # コンテナbackendがコンテナfrontendより先に起動するように設定している
+      # - test_db # コンテナtest_dbがコンテナfrontendより先に起動するように設定している
+    tty: true
 
   backend:
     build:

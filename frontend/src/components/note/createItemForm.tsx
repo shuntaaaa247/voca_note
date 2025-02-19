@@ -3,8 +3,8 @@ import { useCookies } from 'next-client-cookies';
 import { useParams } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form"
-import { FormNoteLine } from "../utils/formNoteLine";
-import { ItemsContext } from "./testNote";
+import { FormNoteLine } from "../utils/FormNoteLine";
+import { ItemsContext } from "./TestNote";
 import { ItemFormSchema, ItemFormType } from "../utils/formType";
 
 export const CreateItemForm = ({
@@ -37,6 +37,7 @@ export const CreateItemForm = ({
     })
 
     const resJson = await res.json();
+    console.log(resJson)
     if (resJson.item) {
       setItems([...items ?? [], resJson.item])
       setModalIsOpen(false)
@@ -53,7 +54,7 @@ export const CreateItemForm = ({
   }, [])
 
   return(
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full bg-slate-50 rounded-xl shadow-md">
+    <form data-testid="CreateItemForm" onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full h-full bg-slate-50 rounded-xl shadow-md">
       <h1 className="text-center text-3xl text-blue-500 mt-6 mb-4">New Vocabulary</h1>
       <FormNoteLine>
         <></>

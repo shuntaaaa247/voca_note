@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroller";
 import { useCookies } from 'next-client-cookies';
 import type { Item as ItemType } from "../../../../backend/generated/zod"
-import { Item } from "@/components/note/item"
-import { CreateItemButton } from "./createItemButton";
+import { Item } from "@/components/note/Item"
+import { CreateItemButton } from "@/components/note/CreateItemButton";
 
 const categoryId: string = "45f6c41d-c78b-4cbf-88f9-1dbe16bd50b7"
 

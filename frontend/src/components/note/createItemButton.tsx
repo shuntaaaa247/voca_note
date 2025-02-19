@@ -1,8 +1,8 @@
 "use client"
 import CreateIcon from '@mui/icons-material/Create'
 import { useState, useRef, useContext, useEffect } from 'react'
-import { ModalWindow } from '../utils/modalWindow';
-import { CreateItemForm } from './createItemForm';
+import { ModalWindow } from '../utils/ModalWindow'; 
+import { CreateItemForm } from './CreateItemForm';
 import { UI_DATA } from '../../constants/uidata';
 
 export const CreateItemButton = () => {
@@ -23,7 +23,7 @@ export const CreateItemButton = () => {
       }
       <div className="fixed bottom-10 right-10">
         <button className='bg-blue-500 p-3 rounded-full hover:bg-blue-400' onClick={() => setModalIsOpen(true)}>
-          <CreateIcon sx={{color: 'white', fontSize: 50}}/>
+          <CreateIcon data-testid="CreateIcon" sx={{color: 'white', fontSize: 50}}/>
         </button>
       </div>
     </>

@@ -1,9 +1,9 @@
 "use client"
 
 import { useRef, useState } from "react"
-import { ModalWindow } from "../utils/modalWindow";
+import { ModalWindow } from "../utils/ModalWindow";
 import { UI_DATA } from "../../constants/uidata";
-import { CreateCategoryForm } from "./createCategoryForm";
+import { CreateCategoryForm } from "./CreateCategoryForm";
 
 export const CreateCategoryButton = () => {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
