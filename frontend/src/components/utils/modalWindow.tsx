@@ -24,7 +24,7 @@ export const ModalWindow = ({ setModalIsOpen, screenClassName, modalClassName, m
 
   useEffect(stopScrollingBackContent, []);
   return(
-    <div className={screenClassName} onClick={() => setModalIsOpen(false)}>
+    <div data-testid="modalWindow" className={screenClassName} onClick={() => setModalIsOpen(false)}>
       <div className={modalClassName} style={modalStyle ?? {}} onClick={(e) => e.stopPropagation()}>
         <div className='flex justify-center '>
           {children}

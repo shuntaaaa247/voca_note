@@ -1,5 +1,5 @@
-import { LeftBar } from "@/components/leftBar/leftBar"
-import { TestNote } from "@/components/note/testNote"
+import { LeftBar } from "@/components/leftBar/LeftBar"
+import { TestNote } from "@/components/note/TestNote"
 
 const CategoryContent = () => {
   return (
