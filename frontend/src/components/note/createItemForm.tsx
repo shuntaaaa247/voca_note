@@ -1,8 +1,9 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useCookies } from 'next-client-cookies';
 import { useParams } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form"
+import CircularProgress from '@mui/material/CircularProgress';
 import { FormNoteLine } from "../utils/FormNoteLine";
 import { ItemsContext } from "./TestNote";
 import { ItemFormSchema, ItemFormType } from "../utils/formType";
@@ -15,6 +16,7 @@ export const CreateItemForm = ({
   const cookies = useCookies();
   const token = cookies.get("token");
   const { items, setItems } = useContext(ItemsContext);
+  const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const categoryId = params.categoryId;
 
@@ -24,6 +26,7 @@ export const CreateItemForm = ({
 
   const onSubmit: SubmitHandler<ItemFormType> = async (inputData) => { //zodのバリデーションが通った時だけ実行される
     console.log(inputData);
+    setIsLoading(true);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items`, {
       method: "POST",
       headers: {
@@ -45,6 +48,7 @@ export const CreateItemForm = ({
       console.log("エラーが発生しました\n" + resJson.message)
       alert("エラーが発生しました\n" + resJson.message)
     }
+    setIsLoading(false);
   };
 
   console.log("errors", errors);
@@ -84,7 +88,9 @@ export const CreateItemForm = ({
       : <></>
       }
       <FormNoteLine>
-        <button type="submit" className="border-blue-500 border-2 text-blue-500 text-lg px-3 my-0.5 mx-auto hover:bg-blue-500 hover:text-white">保存</button>
+        {isLoading ? <CircularProgress className="mx-auto" /> : (
+          <button type="submit" className="border-blue-500 border-2 text-blue-500 text-lg px-3 my-0.5 mx-auto hover:bg-blue-500 hover:text-white">保存</button>
+        )}
       </FormNoteLine>
       <FormNoteLine isDeepest={true}>
         <></>
