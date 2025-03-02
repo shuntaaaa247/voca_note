@@ -72,7 +72,7 @@ export const Item = ( item: ItemType ) => {
         <></>
       )}
       <li key={item.id} id={`item_${item.id}`} className="pl-2" onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)}> {/* アイテム */}
-        <div className="flex justify-start">
+        <div data-testid={`item-${item.id}`} className="flex justify-start">
           {isHovering ? (
             <MoreHorizIcon 
               data-testid="hoveringIcon" 

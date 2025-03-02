@@ -3,7 +3,7 @@ import { useParams } from "next/navigation"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { CreateItemForm } from "@/components/note/CreateItemForm"
-import { testItem1, testItem2 } from "@/__test__/testUtils/testData"
+import { testItems } from "@/__test__/testUtils/testData"
 import { Item } from "../../../../../backend/generated/zod"
 import { ItemsContext } from "@/components/note/TestNote"
 
@@ -14,7 +14,7 @@ jest.mock('next/navigation', () => ({
   useParams: jest.fn(),
 }));
 const mockItems: Item[] = []
-const mockSetItems = jest.fn((newItems: Item[]) => {
+const mockSetItems = jest.fn().mockImplementation((newItems: Item[]) => {
   mockItems.length = 0
   mockItems.push(...newItems)
 })
@@ -30,12 +30,12 @@ describe("components/CreateItemForm.tsx", () => {
 
 
   test("最初のアイテムが作成できる", async () => {
-    ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItem1.categoryId })
+    ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[0].categoryId })
     ;(global.fetch as jest.Mock).mockImplementation(() => {
       return Promise.resolve({
         ok: true,
         json: async () => ({
-          item: testItem1
+          item: testItems[0]
         })
       })
     })
@@ -48,22 +48,22 @@ describe("components/CreateItemForm.tsx", () => {
     const wordInput = screen.getByPlaceholderText("Apple")
     const meaningInput = screen.getByPlaceholderText("リンゴ")
     const submitButton = screen.getByRole("button", {name: "保存"})
-    await user.type(wordInput, testItem1.word)
-    await user.type(meaningInput, testItem1.meaning)
+    await user.type(wordInput, testItems[0].word)
+    await user.type(meaningInput, testItems[0].meaning)
     await user.click(submitButton)
-    expect(mockSetItems).toHaveBeenCalledWith([testItem1]) // アイテムが追加されることを確認
+    expect(mockSetItems).toHaveBeenCalledWith([testItems[0]]) // アイテムが追加されることを確認
     expect(mockSetItems).toHaveBeenCalledTimes(1) // アイテムが追加されることを確認
-    expect(mockItems).toEqual([testItem1]) // アイテムが追加されることを確認
+    expect(mockItems).toEqual([testItems[0]]) // アイテムが追加されることを確認
     expect(mockSetModalIsOpen).toHaveBeenCalledWith(false) // モーダルが閉じられることを確認
   })
 
   test("2つ目のアイテムが作成できる", async () => { // 2つ目のアイテムが作成できることを確認(「最初のアイテムが作成できる」のテストが通っていて、testItem1が追加されていることを前提とする)
-    ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItem2.categoryId })
+    ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[1].categoryId })
     ;(global.fetch as jest.Mock).mockImplementation(() => {
       return Promise.resolve({
         ok: true,
         json: async () => ({
-          item: testItem2
+          item: testItems[1]
         })
       })
     })
@@ -75,17 +75,17 @@ describe("components/CreateItemForm.tsx", () => {
     const wordInput = screen.getByPlaceholderText("Apple")
     const meaningInput = screen.getByPlaceholderText("リンゴ")
     const submitButton = screen.getByRole("button", {name: "保存"})
-    await user.type(wordInput, testItem2.word)
-    await user.type(meaningInput, testItem2.meaning)
+    await user.type(wordInput, testItems[1].word)
+    await user.type(meaningInput, testItems[1].meaning)
     await user.click(submitButton)
-    expect(mockSetItems).toHaveBeenCalledWith([testItem1, testItem2]) // アイテムが追加されることを確認
+    expect(mockSetItems).toHaveBeenCalledWith([testItems[0], testItems[1]]) // アイテムが追加されることを確認
     expect(mockSetItems).toHaveBeenCalledTimes(1) // アイテムが追加されることを確認
-    expect(mockItems).toEqual([testItem1, testItem2]) // アイテムが追加されることを確認
+    expect(mockItems).toEqual([testItems[0], testItems[1]]) // アイテムが追加されることを確認
     expect(mockSetModalIsOpen).toHaveBeenCalledWith(false) // モーダルが閉じられることを確認
   })
 
   test("フォーム送信中はローディングが表示される", async () => {
-    ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItem1.categoryId })
+    ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[0].categoryId })
     
     // APIレスポンスを遅延させる
     ;(global.fetch as jest.Mock).mockImplementation(() => {
@@ -94,7 +94,7 @@ describe("components/CreateItemForm.tsx", () => {
           resolve({
             ok: true,
             json: async () => ({
-              item: testItem1
+              item: testItems[0]
             })
           })
         }, 100)
@@ -109,8 +109,8 @@ describe("components/CreateItemForm.tsx", () => {
     const wordInput = screen.getByPlaceholderText("Apple")
     const meaningInput = screen.getByPlaceholderText("リンゴ")
     const submitButton = screen.getByRole("button", {name: "保存"})
-    await user.type(wordInput, testItem1.word)
-    await user.type(meaningInput, testItem1.meaning)
+    await user.type(wordInput, testItems[0].word)
+    await user.type(meaningInput, testItems[0].meaning)
     await user.click(submitButton)
 
     // ローディング表示が表示されることを確認
