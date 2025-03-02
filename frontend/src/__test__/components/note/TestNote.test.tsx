@@ -190,12 +190,6 @@ describe("TestNote", () => {
       expect(mockFetch).toHaveBeenCalledTimes(2)
     })
 
-    // // 2回目のフェッチ後にローディングが非表示になるのを待つ
-    // await waitFor(() => {
-    //   // ローディングが非表示になったことを確認
-    //   expect(screen.queryByRole("progressbar")).not.toBeVisible()
-    // }, { timeout: 2000 })
-
     // 2回目のフェッチ後、状態更新を確実に反映させる
     await act(async () => {
       // 単純に100ms待機して状態更新を確実に反映させる
