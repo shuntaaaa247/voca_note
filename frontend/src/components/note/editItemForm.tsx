@@ -43,7 +43,7 @@ export const EditItemForm = ({
     const resJson = await res.json();
     if (resJson.item) {
       // 編集したアイテムをitemsの中で更新
-      const updatedItems = items?.map(item => item.id === item.id ? resJson.item : item);
+      const updatedItems = items?.map(item => item.id === resJson.item.id ? resJson.item : item);
       setItems(updatedItems);
 
       setEditModalIsOpen(false)
