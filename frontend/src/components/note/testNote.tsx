@@ -17,7 +17,7 @@ export const TestNote = () => {
   const [items, setItems] = useState<ItemType[]>()
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const loadingRef = useRef(null)
+  const loadingRef = useRef<HTMLDivElement>(null)
   const cookies = useCookies()
   const token = cookies.get("token")
   const params = useParams()
@@ -37,8 +37,9 @@ export const TestNote = () => {
   })
 
   useEffect(() => {
-    const observer = new IntersectionObserver(async ([entry]) => {
-      if (entry.isIntersecting && hasMore) {
+    // console.log("===========\nuseEffect")
+    const observer = new IntersectionObserver(async ([entry]) => { // コールバック関数([entry]) => {...}の引数[entry]は、IntersectionObserver.observe()で渡される引数を配列に格納したもの。すなわち[entry]なので、entryは配列の最初の要素。
+      if (entry.isIntersecting && hasMore) { // entryはIntersectionObserver.observe()で渡される最初の引数。（observe()は何回でも呼べて、監視対象を複数指定できるが、entryは最初に指定した監視対象ということ）
         setIsLoading(true)
         let url: string
         if (!items) {
@@ -67,9 +68,12 @@ export const TestNote = () => {
     })
 
     if (loadingRef.current) {
+      // console.log("loadingRef.currentがあるのでobserveします")
+      // console.log("loadingRef.current => ", loadingRef.current)
       observer.observe(loadingRef.current)
     }
 
+    // console.log("===========")
     return () => observer.disconnect()
   }, [items?.length ?? null, hasMore])
 
@@ -84,7 +88,6 @@ export const TestNote = () => {
           <ul className="my-4 mx-2">
             {items?.map((item: ItemType) => {
               return (
-                // <Item id={item.id} word={item.word} meaning={item.meaning} categoryId={item.categoryId} createdAt={item.createdAt} updatedAt={item.updatedAt} key={item.id}/>
                 <Item {...item} key={item.id}/>
               )
             })}
