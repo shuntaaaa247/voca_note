@@ -1,7 +1,8 @@
-import { useEffect, useContext } from "react"
+import { useEffect, useContext, useState } from "react"
 import { useCookies } from 'next-client-cookies';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import CircularProgress from "@mui/material/CircularProgress";
 import { ItemsContext } from "./TestNote";
 import { FormNoteLine } from "../utils/FormNoteLine"
 import { ItemFormSchema, ItemFormType } from "../utils/formType";
@@ -19,15 +20,17 @@ export const EditItemForm = ({
   const cookies = useCookies();
   const token = cookies.get("token");
   const { items, setItems } = useContext(ItemsContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { register, handleSubmit, formState: { errors }, setFocus } = useForm<ItemFormType>({ //zodで定義したスキーマから取り出した型を設定する
     resolver: zodResolver(ItemFormSchema) //zodで定義したスキーマでバリデーションするため
-  });
+  })
 
   console.log("errors", errors);
 
   const onSubmit: SubmitHandler<ItemFormType> = async (inputData) => {
     console.log(inputData);
+    setIsLoading(true);
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${item.categoryId}/items/${item.id}`, {
       method: "PATCH",
       headers: {
@@ -53,6 +56,7 @@ export const EditItemForm = ({
       console.log("エラーが発生しました\n" + resJson.message)
       alert("エラーが発生しました\n" + resJson.message)
     }
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -66,10 +70,10 @@ export const EditItemForm = ({
         <></>
       </FormNoteLine>
       <FormNoteLine>
-        <label className="pl-2 pt-3">・言葉</label>
+        <label htmlFor="word" className="pl-2 pt-3">・言葉</label>
       </FormNoteLine>
       <FormNoteLine>
-        <input type="text" defaultValue={item.word} placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("word")} />
+        <input id="word" type="text" defaultValue={item.word} placeholder="Apple" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("word")} />
       </FormNoteLine>
       { errors.word?.message 
       ? <FormNoteLine>
@@ -78,10 +82,10 @@ export const EditItemForm = ({
       : <></>
       }
       <FormNoteLine>
-        <label className="pl-2 pt-3">・意味</label>
+        <label htmlFor="meaning" className="pl-2 pt-3">・意味</label>
       </FormNoteLine>
       <FormNoteLine>
-        <input type="text" defaultValue={item.meaning} placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("meaning")} />
+        <input id="meaning" type="text" defaultValue={item.meaning} placeholder="リンゴ" className="bg-slate-50 pl-2 pt-2 ml-4 w-full focus:outline-none" {...register("meaning")} />
       </FormNoteLine>
       { errors.meaning?.message 
       ? <FormNoteLine>
@@ -90,7 +94,11 @@ export const EditItemForm = ({
       : <></>
       }
       <FormNoteLine>
-        <button type="submit" className="border-green-600 border-2 text-green-600 text-lg px-3 my-0.5 mx-auto hover:bg-green-600 hover:text-white">編集を保存</button>
+        {isLoading ? (
+          <CircularProgress className="mx-auto" />
+        ) : (
+          <button type="submit" className="border-green-600 border-2 text-green-600 text-lg px-3 my-0.5 mx-auto hover:bg-green-600 hover:text-white">編集を保存</button>
+        )}
       </FormNoteLine>
       <FormNoteLine isDeepest={true}>
         <></>
