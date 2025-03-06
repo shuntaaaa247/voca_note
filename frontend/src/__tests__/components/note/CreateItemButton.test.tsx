@@ -5,11 +5,6 @@ import { CreateItemButton } from "@/components/note/CreateItemButton"
 
 const user = userEvent.setup()
 
-jest.mock('next/navigation', () => ({
-  ...jest.requireActual('next/navigation'),
-  useParams: jest.fn(),
-}));
-
 describe("components/CreateItemButton.tsx", () => {
   test("アイテム作成ボタンが表示される", () => {
     render(<CreateItemButton />)
