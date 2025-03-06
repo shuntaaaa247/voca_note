@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event"
 import { EditItemForm } from "@/components/note/EditItemForm"
 import { ItemsContext } from "@/components/note/TestNote"
 import { testItems } from "@/__tests__/__utils__/testData"
-import { mockCookieStore, mockUseCookies } from "@/__tests__/__mocks__/cookie"
+import { mockCookieStore, mockUseCookies } from "@/__tests__/__mocks__/cookies"
 import type { Item } from "../../../../../backend/generated/zod"
 
 const user = userEvent.setup()

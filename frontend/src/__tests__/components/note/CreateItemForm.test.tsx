@@ -9,10 +9,6 @@ import { ItemsContext } from "@/components/note/TestNote"
 
 const user = userEvent.setup()
 
-jest.mock('next/navigation', () => ({
-  ...jest.requireActual('next/navigation'),
-  useParams: jest.fn(),
-}));
 const mockItems: Item[] = []
 const mockSetItems = jest.fn().mockImplementation((newItems: Item[]) => {
   mockItems.length = 0
@@ -27,7 +23,6 @@ describe("components/CreateItemForm.tsx", () => {
     mockSetItems.mockClear()
     mockSetModalIsOpen.mockClear()
   })
-
 
   test("最初のアイテムが作成できる", async () => {
     ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[0].categoryId })
