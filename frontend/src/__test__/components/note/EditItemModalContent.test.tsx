@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import { EditItemModalContent } from "@/components/note/EditItemModalContent"
-import { testItems } from "@/__test__/testUtils/testData"
+import { testItems } from "@/__test__/__utils__/testData"
 import { UI_DATA } from "@/constants/uidata"
 import { Item } from "../../../../../backend/generated/zod"
 
