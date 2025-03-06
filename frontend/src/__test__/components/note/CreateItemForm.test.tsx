@@ -3,7 +3,7 @@ import { useParams } from "next/navigation"
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { CreateItemForm } from "@/components/note/CreateItemForm"
-import { testItems } from "@/__test__/testUtils/testData"
+import { testItems } from "@/__test__/__utils__/testData"
 import { Item } from "../../../../../backend/generated/zod"
 import { ItemsContext } from "@/components/note/TestNote"
 
