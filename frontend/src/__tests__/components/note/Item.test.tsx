@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { Item } from "@/components/note/Item"
-import { testItems } from "@/__test__/__utils__/testData"
+import { testItems } from "@/__tests__/__utils__/testData"
 
 const user = userEvent.setup()
 
