@@ -2,8 +2,8 @@ import { render, screen, waitFor, act } from "@testing-library/react"
 import { useParams } from "next/navigation"
 import useSWR from "swr"
 import { TestNote } from "@/components/note/TestNote"
-import { testItems } from "@/__test__/testUtils/testData"
-import { testCategory } from "@/__test__/testUtils/testData"
+import { testItems } from "@/__test__/__utils__/testData"
+import { testCategory } from "@/__test__/__utils__/testData"
 
 jest.mock("next/navigation", () => ({
   useParams: jest.fn()
