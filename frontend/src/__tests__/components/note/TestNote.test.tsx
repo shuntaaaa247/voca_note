@@ -4,10 +4,7 @@ import useSWR from "swr"
 import { TestNote } from "@/components/note/TestNote"
 import { testItems } from "@/__tests__/__utils__/testData"
 import { testCategory } from "@/__tests__/__utils__/testData"
-
-jest.mock("next/navigation", () => ({
-  useParams: jest.fn()
-}))
+import { mockCookieStore, mockUseCookies } from "@/__tests__/__mocks__/cookies"
 
 jest.mock("swr", () => ({
   __esModule: true,
@@ -15,21 +12,8 @@ jest.mock("swr", () => ({
   useSWR: jest.fn()
 }))
 
-const cookieStore = new Map<string, string>()
-const mockCookies = {
-  set: jest.fn((key: string, value: string) => cookieStore.set(key, value)),
-  get: jest.fn((key: string) => cookieStore.get(key))
-}
-jest.mock("next-client-cookies", () => ({
-  useCookies: () => mockCookies
-}))
-
 // フェッチのモックを設定
 const mockFetch = jest.fn().mockImplementationOnce(() => {
-  // return Promise.resolve({
-  //   ok: true,
-  //   json: () => Promise.resolve({ items: testItems })
-  // })
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
@@ -78,10 +62,10 @@ global.IntersectionObserver = mockIntersectionObserver
 
 describe("TestNote", () => {
   beforeEach(() => {
-    mockCookies.set.mockClear()
-    mockCookies.get.mockClear()
-    cookieStore.clear()
-    cookieStore.set("token", "testToken")
+    mockUseCookies.set.mockClear()
+    mockUseCookies.get.mockClear()
+    mockCookieStore.clear()
+    mockCookieStore.set("token", "testToken")
     mockIntersectionObserver.mockClear()
     mockObserve.mockClear()
     mockFetch.mockClear()
@@ -150,7 +134,7 @@ describe("TestNote", () => {
       expect.objectContaining({ // fetchの第二引数に渡されるオブジェクトが正しいか確認
         method: "GET",
         headers: {
-          "authorization": `Bearer ${cookieStore.get("token")}`
+          "authorization": `Bearer ${mockCookieStore.get("token")}`
         }
       })
     )
