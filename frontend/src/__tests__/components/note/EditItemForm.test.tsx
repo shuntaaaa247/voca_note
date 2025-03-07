@@ -2,9 +2,8 @@ import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { EditItemForm } from "@/components/note/EditItemForm"
 import { ItemsContext } from "@/components/note/TestNote"
-import { testItems } from "@/__tests__/__utils__/testData"
-import { mockCookieStore, mockUseCookies } from "@/__tests__/__mocks__/cookies"
-import type { Item } from "../../../../../backend/generated/zod"
+import { testItems, longString } from "@/__tests__/__utils__/testData"
+import { mockCookieStore } from "@/__tests__/__mocks__/cookies"
 
 const user = userEvent.setup()
 
@@ -18,6 +17,9 @@ describe("EditItemForm", () => {
   beforeEach(() => {
     mockCookieStore.clear()
     mockCookieStore.set("token", "testToken")
+    mockSetItems.mockClear()
+    mockSetSelectionModalIsOpen.mockClear()
+    mockSetEditModalIsOpen.mockClear()
   })
 
   test("正しくレンダリングされる", () => {
@@ -128,6 +130,38 @@ describe("EditItemForm", () => {
         testItems.map(item => item.id === updatedItem.id ? updatedItem : item)
       )
     })
-  })  
-  
+  })
+
+  test("バリデーションエラーが表示される", async () => {
+    render(
+      <EditItemForm item={testItems[0]} setSelectionModalIsOpen={mockSetSelectionModalIsOpen} setEditModalIsOpen={mockSetEditModalIsOpen} />
+    )
+
+    const inputWord = screen.getByRole("textbox", { name: "・言葉" })
+    const inputMeaning = screen.getByRole("textbox", { name: "・意味" })
+
+    // 入力値が空の場合
+    await user.clear(inputWord)
+    await user.clear(inputMeaning)
+    
+    await user.click(screen.getByRole("button", { name: "編集を保存" }))
+
+    await waitFor(() => {
+      expect(screen.getByText('"言葉"は必須です')).toBeInTheDocument()
+      expect(screen.getByText('"意味"は必須です')).toBeInTheDocument()
+    })
+
+    // 入力値が300文字を超える場合
+    await user.clear(inputWord)
+    await user.clear(inputMeaning)
+    await user.type(inputWord, longString)
+    await user.type(inputMeaning, longString)
+
+    await user.click(screen.getByRole("button", { name: "編集を保存" }))
+    
+    await waitFor(() => {
+      expect(screen.getAllByText("300文字以内で入力してください")).toHaveLength(2)
+    })
+
+  })
 })
