@@ -43,13 +43,13 @@ export const Login = () => {
         setErrorMessage(resJson.message);
       } else {
         return(
-          <div>500 Server Error</div>
+          <div>Error</div>
         )
       }
     } catch (e) {
       console.log(e)
       return(
-        <div>500 Server Error</div>
+        <div>Error</div>
       )
     }
   }
