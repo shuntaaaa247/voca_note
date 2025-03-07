@@ -17,22 +17,27 @@ export const LeftBar = async () => {
   // const url: string = `http://backend:5000/categories`
   const url: string = `${process.env.NEXT_PUBLIC_API_URL_FOR_LEFTBAR}/categories`
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: {
-      "authorization": `Bearer ${token}`
+  let errorMessage: String = ""
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "authorization": `Bearer ${token}`
+      }
+    })
+    const resJson = await response.json()
+    // const categories = resJson.categories
+    if (response.ok) {
+      categories = resJson.categories
+    } else if (response.status === 401) {
+      redirect("/login")  
+    } else {
+      throw new Error("res.statusText: " + response.statusText + "\nres.status: " + response.status);
     }
-  })
-  const resJson = await response.json()
-  // const categories = resJson.categories
-  if (response.ok) {
-    categories = resJson.categories
-  } else if (response.status === 401) {
-    redirect("/login")
-  } else {
-    return (
-      <div>500 Server Error</div>
-    )
+  } catch (error) {
+    console.log("エラーが発生しました\n", error);
+    errorMessage = "エラー：カテゴリーを取得できませんでした。"
   }
 
   return(
@@ -40,7 +45,9 @@ export const LeftBar = async () => {
       <h1 className="text-3xl m-2 mb-10 font-thin">VOCA NOTE</h1>
       <CreateCategoryButton />
       <Suspense fallback={<div>読み込み中...</div>}>
-        {categories.map((category: Category) => {
+      { errorMessage
+      ? <p className="pb-3 text-red-500 font-medium border-b-2">エラー：カテゴリーを取得できませんでした。</p>
+      : categories.map((category: Category) => {
           return (
             <LinkButton id={category.id} categoryName={category.categoryName} userId={category.userId} createdAt={category.createdAt} updatedAt={category.updatedAt}/>
           )
