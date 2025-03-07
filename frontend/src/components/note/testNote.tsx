@@ -93,10 +93,11 @@ export const TestNote = () => {
       <div className="basis-5/6 flex justify-start my-5 py-20 mr-3 rounded-3xl shadow-xl overflow-auto bg-slate-50">
         <div className="basis-full ">
           { _isLoading
-          ? <CircularProgress />
-          : fetchCategoryError
-          ? <p className="pb-3 ml-7 mr-2 text-xl text-red-500 font-medium border-b-2">エラー：カテゴリーを取得できませんでした。</p>
-          : <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">{ categoryData?.category.categoryName }</h2>
+            ? <CircularProgress />
+            : 
+              fetchCategoryError || !categoryData.category.categoryName
+                ? <p className="pb-3 ml-7 mr-2 text-xl text-red-500 font-medium border-b-2">エラー：カテゴリーを取得できませんでした。</p>
+                : <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">{ categoryData?.category.categoryName }</h2>
           }
           { fetchItemsError
           ? <p className="ml-7 text-red-500 font-medium">エラー：アイテムを取得できませんでした。</p>
@@ -109,13 +110,6 @@ export const TestNote = () => {
               })}
             </ul>
           }
-          {/* <ul className="my-4 mx-2">
-            {items?.map((item: ItemType) => {
-              return (
-                <Item {...item} key={item.id}/>
-              )
-            })}
-          </ul> */}
           <CreateItemButton />
           <div ref={loadingRef} className='flex justify-center'>{ isLoading ? <CircularProgress /> : <></>}</div>
         </div>
