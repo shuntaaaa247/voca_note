@@ -31,30 +31,39 @@ export const EditItemForm = ({
   const onSubmit: SubmitHandler<ItemFormType> = async (inputData) => {
     console.log(inputData);
     setIsLoading(true);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${item.categoryId}/items/${item.id}`, {
-      method: "PATCH",
-      headers: {
-        "authorization": `Bearer ${token}`,
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify({
-        word: inputData.word, 
-        meaning: inputData.meaning
-      }),
-    })
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${item.categoryId}/items/${item.id}`, {
+        method: "PATCH",
+        headers: {
+          "authorization": `Bearer ${token}`,
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          word: inputData.word, 
+          meaning: inputData.meaning
+        }),
+      })
 
-    const resJson = await res.json();
-    if (resJson.item) {
-      // 編集したアイテムをitemsの中で更新
-      const updatedItems = items?.map(item => item.id === resJson.item.id ? resJson.item : item);
-      setItems(updatedItems);
+      if (!res.ok) {
+        throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
+      }
 
-      setEditModalIsOpen(false)
-      setSelectionModalIsOpen(false)
+      const resJson = await res.json();
+      if (resJson.item) {
+        // 編集したアイテムをitemsの中で更新
+        const updatedItems = items?.map(item => item.id === resJson.item.id ? resJson.item : item);
+        setItems(updatedItems);
 
-    } else if (resJson.message) {
-      console.log("エラーが発生しました\n" + resJson.message)
-      alert("エラーが発生しました\n" + resJson.message)
+        setEditModalIsOpen(false)
+        setSelectionModalIsOpen(false)
+
+      } else {
+        console.log("アイテムを取得できませんでした。\nresJson.message: " + resJson.message)
+        alert("アイテムを取得できませんでした。")
+      }
+    } catch (error) {
+      alert("エラーが発生しました");
+      console.log("エラーが発生しました\n", error);
     }
     setIsLoading(false);
   }
