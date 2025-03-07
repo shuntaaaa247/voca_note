@@ -110,3 +110,5 @@ export const testCategory: CategoryType = {
   createdAt: new Date(),
   updatedAt: new Date()
 }
+
+export const longString = "a".repeat(301)
