@@ -27,24 +27,33 @@ export const EditCategoryNameForm = ({
   console.log(`errors: ${errors}`);
 
   const onSubmit = async (data: CategoryFormType) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        "authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({ newCategoryName: data.categoryName }),
-    });
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ newCategoryName: data.categoryName }),
+      });
 
-    const resJson = await res.json();
+      const resJson = await res.json();
 
-    if (resJson.category) {
-      setEditCategoryNameModalIsOpen(false);
-      setSelectionModalIsOpen(false);
-      router.refresh();
-    } else {
-      alert(`エラーが発生しました: ${resJson.message}`);
-      console.log(resJson.message);
+      if (!res.ok) {
+        throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
+      }
+
+      if (resJson.category) {
+        setEditCategoryNameModalIsOpen(false);
+        setSelectionModalIsOpen(false);
+        router.refresh();
+      } else {
+        alert(`カテゴリーを取得できませんでした`);
+        console.log("カテゴリーを取得できませんでした \nresJson.message", resJson.message);
+      }
+    } catch (error) {
+      alert("エラーが発生しました");
+      console.log("エラーが発生しました", error);
     }
   }
   
