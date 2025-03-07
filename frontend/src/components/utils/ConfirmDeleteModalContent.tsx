@@ -23,28 +23,33 @@ export const ConfirmDeleteModalContent = ({
   const router = useRouter();
   const { items, setItems } = useContext(ItemsContext)
   const handleDelete = async () => {
-    const res = await fetch(url, {
-      method: "DELETE",
-      headers: {
-        "authorization": `Bearer ${token}`
-      }
-    })
-    console.log("res => ", res)
-    if (res.status === 204) {
-      if (itemId) { // アイテムを削除する場合
-        setConfirmDeleteModalIsOpen(false)
-        setSelectionModalIsOpen(false)
-        setItems(items?.filter((item) => item.id !== itemId) ?? items) // 削除したアイテムを除外したitemsをセット
-      } else { // カテゴリを削除する場合
-        if (categoryId === params.categoryId) {
-          router.push("/")
+    try {
+      const res = await fetch(url, {
+        method: "DELETE",
+        headers: {
+          "authorization": `Bearer ${token}`
         }
-        router.refresh()
-        setConfirmDeleteModalIsOpen(false)
-        setSelectionModalIsOpen(false)
+      })
+      // console.log("res => ", res)
+      if (res.status === 204) {
+        if (itemId) { // アイテムを削除する場合
+          setConfirmDeleteModalIsOpen(false)
+          setSelectionModalIsOpen(false)
+          setItems(items?.filter((item) => item.id !== itemId) ?? items) // 削除したアイテムを除外したitemsをセット
+        } else { // カテゴリを削除する場合
+          if (categoryId === params.categoryId) {
+            router.push("/")
+          }
+          router.refresh()
+          setConfirmDeleteModalIsOpen(false)
+          setSelectionModalIsOpen(false)
+        }
+      } else {
+        throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
       }
-    } else {
-      alert("エラーが発生しました。")
+    } catch (error) {
+      alert("エラーが発生しました")
+      console.log("エラーが発生しました\n", error)
     }
   }
   return (
