@@ -27,26 +27,35 @@ export const CreateItemForm = ({
   const onSubmit: SubmitHandler<ItemFormType> = async (inputData) => { //zodのバリデーションが通った時だけ実行される
     console.log(inputData);
     setIsLoading(true);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items`, {
-      method: "POST",
-      headers: {
-        "authorization": `Bearer ${token}`,
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify({
-        word: inputData.word,
-        meaning: inputData.meaning
-      }),
-    })
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${categoryId}/items`, {
+        method: "POST",
+        headers: {
+          "authorization": `Bearer ${token}`,
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          word: inputData.word,
+          meaning: inputData.meaning
+        }),
+      })
 
-    const resJson = await res.json();
-    console.log(resJson)
-    if (resJson.item) {
-      setItems([...items ?? [], resJson.item])
-      setModalIsOpen(false)
-    } else if (resJson.message) {
-      console.log("エラーが発生しました\n" + resJson.message)
-      alert("エラーが発生しました\n" + resJson.message)
+      if (!res.ok) {
+        throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
+      }
+
+      const resJson = await res.json();
+      console.log(resJson)
+      if (resJson.item) {
+        setItems([...items ?? [], resJson.item])
+        setModalIsOpen(false)
+      } else {
+        console.log("アイテムを取得できませんでした。\nresJson.message: " + resJson.message)
+        alert("アイテムを取得できませんでした")
+      }
+    } catch (error) {
+      alert("エラーが発生しました");
+      console.log("エラーが発生しました\n", error);
     }
     setIsLoading(false);
   };
