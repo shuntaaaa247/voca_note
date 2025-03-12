@@ -17,6 +17,7 @@ export const LeftBar = async () => {
   // const url: string = `http://backend:5000/categories`
   const url: string = `${process.env.NEXT_PUBLIC_API_URL_FOR_LEFTBAR}/categories`
 
+  let tokenIsExpired: boolean = false // トークンが期限切れかどうかを判断するためのフラグ
   let errorMessage: String = ""
 
   try {
@@ -31,13 +32,17 @@ export const LeftBar = async () => {
     if (response.ok) {
       categories = resJson.categories
     } else if (response.status === 401) {
-      redirect("/login")  
+      tokenIsExpired = true
     } else {
       throw new Error("res.statusText: " + response.statusText + "\nres.status: " + response.status);
     }
   } catch (error) {
     console.log("エラーが発生しました\n", error);
     errorMessage = "エラー：カテゴリーを取得できませんでした。"
+  }
+
+  if (tokenIsExpired) {
+    redirect("/login")
   }
 
   return(
