@@ -30,6 +30,12 @@ export const ConfirmDeleteModalContent = ({
           "authorization": `Bearer ${token}`
         }
       })
+      
+      if (res.status === 401) {
+        alert("認証のためログイン画面に移動します")
+        router.push("/login")
+        return;
+      }
       // console.log("res => ", res)
       if (res.status === 204) {
         if (itemId) { // アイテムを削除する場合
