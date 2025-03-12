@@ -10,4 +10,5 @@ jest.mock("next-client-cookies", () => ({
 jest.mock("next/navigation", () => ({
   ...jest.requireActual('next/navigation'),
   useParams: jest.fn(),
+  useRouter: jest.fn()
 }))
