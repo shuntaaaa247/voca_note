@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event"
 import { CreateItemForm } from "@/components/note/CreateItemForm"
 import { testItems } from "@/__tests__/__utils__/testData"
 import { Item } from "../../../../../backend/generated/zod"
-import { ItemsContext } from "@/components/note/TestNote"
+import { ItemsContext } from "@/components/note/Note"
 
 const user = userEvent.setup()
 
