@@ -103,12 +103,34 @@ export const testItems = [
   testItem10
 ]
 
-export const testCategory: CategoryType = {
+const testCategory1: CategoryType = {
   id: "1",
-  categoryName: "test-category",
+  categoryName: "test-category-1",
   userId: "1",
   createdAt: new Date(),
   updatedAt: new Date()
 }
+
+const testCategory2: CategoryType = {
+  id: "2",
+  categoryName: "test-category-2",
+  userId: "1",
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+
+const testCategory3: CategoryType = {
+  id: "3",
+  categoryName: "test-category-3",
+  userId: "1",
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+
+export const testCategories = [
+  testCategory1,
+  testCategory2,
+  testCategory3
+]
 
 export const longString = "a".repeat(301)
