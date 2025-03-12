@@ -1,9 +1,8 @@
 import { render, screen, waitFor, act } from "@testing-library/react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import useSWR from "swr"
 import { TestNote } from "@/components/note/TestNote"
-import { testItems } from "@/__tests__/__utils__/testData"
-import { testCategory } from "@/__tests__/__utils__/testData"
+import { testItems, testCategories } from "@/__tests__/__utils__/testData"
 import { mockCookieStore, mockUseCookies } from "@/__tests__/__mocks__/cookies"
 
 jest.mock("swr", () => ({
@@ -86,7 +85,7 @@ describe("TestNote", () => {
   test("カテゴリー名読み込み後にカテゴリー名が表示される", async () => {
     ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[0].categoryId })
     ;(useSWR as jest.Mock).mockReturnValue({
-      data: { category: testCategory },
+      data: { category: testCategories[0] },
       error: null,
       isLoading: false // カテゴリー名読み込み後
     })
@@ -94,7 +93,7 @@ describe("TestNote", () => {
     render(<TestNote />)
 
     expect(await screen.findByRole("heading", { 
-      name: testCategory.categoryName, 
+      name: testCategories[0].categoryName, 
       level: 2 
     })).toBeVisible()
 
@@ -105,7 +104,7 @@ describe("TestNote", () => {
     // モックの設定
     ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[0].categoryId })
     ;(useSWR as jest.Mock).mockReturnValue({
-      data: { category: testCategory },
+      data: { category: testCategories[0] },
       error: null,
       isLoading: false
     })
