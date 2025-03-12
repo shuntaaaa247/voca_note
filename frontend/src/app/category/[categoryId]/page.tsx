@@ -1,11 +1,11 @@
 import { LeftBar } from "@/components/leftBar/LeftBar"
-import { TestNote } from "@/components/note/TestNote"
+import { Note } from "@/components/note/Note"
 
 const CategoryContent = () => {
   return (
     <main className="flex justify-start">
       <LeftBar />
-      <TestNote />
+      <Note />
     </main>
   )
 }

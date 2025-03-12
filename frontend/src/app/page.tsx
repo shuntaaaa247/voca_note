@@ -1,11 +1,11 @@
 import { LeftBar } from "@/components/leftBar/LeftBar"
-import { Note } from "@/components/note/note"
+import { HomeNote } from "@/components/note/HomeNote"
 
 export default function Home() {
   return (
     <main className="flex justify-start">
       <LeftBar />
-      <Note />
+      <HomeNote />
     </main>
   )
 }
