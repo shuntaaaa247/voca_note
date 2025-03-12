@@ -134,3 +134,6 @@ export const testCategories = [
 ]
 
 export const longString = "a".repeat(301)
+
+
+const commitTest = "コミットのテスト"
