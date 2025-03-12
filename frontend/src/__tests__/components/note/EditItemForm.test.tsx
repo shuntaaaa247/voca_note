@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { EditItemForm } from "@/components/note/EditItemForm"
-import { ItemsContext } from "@/components/note/TestNote"
+import { ItemsContext } from "@/components/note/Note"
 import { testItems, longString } from "@/__tests__/__utils__/testData"
 import { mockCookieStore } from "@/__tests__/__mocks__/cookies"
 

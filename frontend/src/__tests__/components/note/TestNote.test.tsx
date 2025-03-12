@@ -1,7 +1,7 @@
 import { render, screen, waitFor, act } from "@testing-library/react"
 import { useParams, useRouter } from "next/navigation"
 import useSWR from "swr"
-import { TestNote } from "@/components/note/TestNote"
+import { Note } from "@/components/note/Note"
 import { testItems, testCategories } from "@/__tests__/__utils__/testData"
 import { mockCookieStore, mockUseCookies } from "@/__tests__/__mocks__/cookies"
 
@@ -77,7 +77,7 @@ describe("TestNote", () => {
       isLoading: true // カテゴリー名読み込み中
     })
     
-    render(<TestNote />)
+    render(<Note />)
 
     expect(screen.getByRole("progressbar")).toBeVisible()
   })
@@ -90,7 +90,7 @@ describe("TestNote", () => {
       isLoading: false // カテゴリー名読み込み後
     })
 
-    render(<TestNote />)
+    render(<Note />)
 
     expect(await screen.findByRole("heading", { 
       name: testCategories[0].categoryName, 
@@ -110,7 +110,7 @@ describe("TestNote", () => {
     })
   
     // TestNote.tsxがレンダリングされuseEffectが実行され、モックしたIntersectionObserverが生成される。そして、new IntersectionObserver()に渡されたコールバック関数がモック外の変数intersectionCallbackに格納される
-    render(<TestNote />) // ① useEffect実行 → mockObserve(1回目)
+    render(<Note />) // ① useEffect実行 → mockObserve(1回目)
 
     // useEffectが実行され、IntersectionObserver()とIntersectionObserver.observe()が実行されたことを確認
     expect(mockIntersectionObserver).toHaveBeenCalled()
