@@ -2,7 +2,7 @@ import { useCookies } from "next-client-cookies";
 import { useContext } from "react";
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation'
-import { ItemsContext } from "../note/TestNote";
+import { ItemsContext } from "../note/Note";
 
 export const ConfirmDeleteModalContent = ({ 
   itemId, 
