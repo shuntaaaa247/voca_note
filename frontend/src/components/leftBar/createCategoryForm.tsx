@@ -35,6 +35,13 @@ export const CreateCategoryForm = ({
           categoryName: inputData.categoryName
         })
       })
+
+      if (res.status === 401) {
+        alert("認証のためログイン画面に移動します")
+        router.push("/login")
+        return;
+      }
+
       const resJson = await res.json();
       if (res.ok) {
         setModalIsOpen(false);

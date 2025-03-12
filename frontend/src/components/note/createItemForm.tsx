@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useCookies } from 'next-client-cookies';
 import { useParams } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form"
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,7 +20,7 @@ export const CreateItemForm = ({
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const categoryId = params.categoryId;
-
+  const router = useRouter();
   const { register, handleSubmit, formState: { errors }, setFocus } = useForm<ItemFormType>({ //zodで定義したスキーマから取り出した型を設定する
     resolver: zodResolver(ItemFormSchema) //zodで定義したスキーマでバリデーションするため
   });
@@ -39,6 +40,12 @@ export const CreateItemForm = ({
           meaning: inputData.meaning
         }),
       })
+
+      if (res.status === 401) {
+        alert("認証のためログイン画面に移動します")
+        router.push("/login")
+        return;
+      }
 
       if (!res.ok) {
         throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
