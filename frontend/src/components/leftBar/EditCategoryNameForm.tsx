@@ -39,6 +39,12 @@ export const EditCategoryNameForm = ({
 
       const resJson = await res.json();
 
+      if (res.status === 401) {
+        alert("認証のためログイン画面に移動します")
+        router.push("/login")
+        return;
+      }
+
       if (!res.ok) {
         throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
       }

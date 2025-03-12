@@ -1,5 +1,6 @@
 import { useEffect, useContext, useState } from "react"
 import { useCookies } from 'next-client-cookies';
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -19,9 +20,9 @@ export const EditItemForm = ({
 }) => {
   const cookies = useCookies();
   const token = cookies.get("token");
+  const router = useRouter();
   const { items, setItems } = useContext(ItemsContext);
   const [isLoading, setIsLoading] = useState(false);
-
   const { register, handleSubmit, formState: { errors }, setFocus } = useForm<ItemFormType>({ //zodで定義したスキーマから取り出した型を設定する
     resolver: zodResolver(ItemFormSchema) //zodで定義したスキーマでバリデーションするため
   })
@@ -43,6 +44,12 @@ export const EditItemForm = ({
           meaning: inputData.meaning
         }),
       })
+
+      if (res.status === 401) {
+        alert("認証のためログイン画面に移動します")
+        router.push("/login")
+        return;
+      }
 
       if (!res.ok) {
         throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
