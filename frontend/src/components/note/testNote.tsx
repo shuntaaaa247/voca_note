@@ -1,5 +1,5 @@
 "use client"
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, createContext } from "react"
 import useSWR from 'swr';
 import { useCookies } from 'next-client-cookies';
@@ -23,7 +23,7 @@ export const TestNote = () => {
   const token = cookies.get("token")
   const params = useParams()
   const categoryId = params.categoryId;
-
+  const router = useRouter()
   const currentCategoryFetcher = (url: string) => fetch(url, {
     method: "GET",
     headers: {
@@ -58,6 +58,11 @@ export const TestNote = () => {
             "authorization": `Bearer ${token}`
             }
           });
+
+          if (res.status === 401) {
+            router.push("/login")
+          }
+
           if (!res.ok) {
             throw new Error("res.statusText: " + res.statusText + "\nres.status: " + res.status);
           }
@@ -95,9 +100,9 @@ export const TestNote = () => {
           { _isLoading
             ? <CircularProgress />
             : 
-              fetchCategoryError || !categoryData.category.categoryName
+              fetchCategoryError
                 ? <p className="pb-3 ml-7 mr-2 text-xl text-red-500 font-medium border-b-2">エラー：カテゴリーを取得できませんでした。</p>
-                : <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">{ categoryData?.category.categoryName }</h2>
+                : <h2 className="pb-3 ml-7 mr-2 text-4xl text-slate-700 font-medium border-b-2">{ categoryData?.category?.categoryName ?? "エラー：カテゴリーを取得できませんでした。" }</h2>
           }
           { fetchItemsError
           ? <p className="ml-7 text-red-500 font-medium">エラー：アイテムを取得できませんでした。</p>
