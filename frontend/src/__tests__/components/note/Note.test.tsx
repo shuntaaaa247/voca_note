@@ -31,7 +31,7 @@ const mockFetch = jest.fn().mockImplementationOnce(() => {
     }, 100)
   })
 })
-global.fetch = mockFetch
+// global.fetch = mockFetch
 
 // useEffect内のnew IntersectionObserver()に渡されたのコールバック関数が格納される変数
 // この関数を実行すれば、useEffect内のIntersectionObserverのコールバック関数をテスト内で手動で実行できる
@@ -59,7 +59,7 @@ const mockIntersectionObserver = jest.fn((callback) => {
 // TestNote.tsxのuseEffect内のnew IntersectionObserver()をモックしているから、本当のnew IntersectionObserver()、IntersectionObserver.observe()は実行されない（useEffect内の実際のデータフェッチなどは実行されない）。
 global.IntersectionObserver = mockIntersectionObserver 
 
-describe("TestNote", () => {
+describe("Note_正常系", () => {
   beforeEach(() => {
     mockUseCookies.set.mockClear()
     mockUseCookies.get.mockClear()
@@ -68,6 +68,7 @@ describe("TestNote", () => {
     mockIntersectionObserver.mockClear()
     mockObserve.mockClear()
     mockFetch.mockClear()
+    global.fetch = mockFetch
   })
   test("カテゴリー名読み込み中に読み込み中の表示が出る", async () => {
     ;(useParams as jest.Mock).mockReturnValue({ categoryId: testItems[0].categoryId })
@@ -185,5 +186,37 @@ describe("TestNote", () => {
 
     // ローディングが非表示になったことを確認
     expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+  })
+})
+
+
+const mockFetch401 = jest.fn().mockImplementationOnce(() => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ status: 401 })
+    }, 100)
+  })
+})
+
+describe("Note_異常系", () => {
+  test("カテゴリー読み込みで401エラーが返ってきたらログイン画面にリダイレクトされる", () => {
+    ;(useParams as jest.Mock).mockReturnValue({ categoryId: "testCategoryId" })
+    ;(useSWR as jest.Mock).mockReturnValue({
+      data: undefined,
+      error: { status: 401 },
+      isLoading: false // カテゴリー名読み込み中
+    })
+    render(<Note />)
+
+    expect(useRouter().push).toHaveBeenCalledWith("/login")
+  })
+
+  test("アイテム読み込みで401エラーが返ってきたらログイン画面にリダイレクトされる", async () => {
+    ;(useParams as jest.Mock).mockReturnValue({ categoryId: "testCategoryId" })
+    global.fetch = mockFetch401
+    render(<Note />)
+    await waitFor(() => {
+      expect(useRouter().push).toHaveBeenCalledWith("/login")
+    })
   })
 })
