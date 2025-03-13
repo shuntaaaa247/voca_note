@@ -5,7 +5,7 @@ import { CreateItemButton } from "@/components/note/CreateItemButton"
 
 const user = userEvent.setup()
 
-describe("components/CreateItemButton.tsx", () => {
+describe("CreateItemButton_正常系", () => {
   test("アイテム作成ボタンが表示される", () => {
     render(<CreateItemButton />)
     expect(screen.getByTestId("CreateIcon")).toBeVisible()

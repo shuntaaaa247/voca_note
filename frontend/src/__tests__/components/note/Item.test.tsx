@@ -5,7 +5,7 @@ import { testItems } from "@/__tests__/__utils__/testData"
 
 const user = userEvent.setup()
 
-describe("components/Item.tsx", () => {
+describe("Item_正常系", () => {
   test("アイテムが正しく表示される", () => {
     render(<Item {...testItems[0]} key={testItems[0].id} />)
     expect(screen.getByText(testItems[0].word)).toBeVisible()

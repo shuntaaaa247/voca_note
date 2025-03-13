@@ -43,7 +43,7 @@ jest.mock("@/components/utils/ModalWindow", () => ({
   )
 }))
 
-describe("EditItemModalContent", () => {
+describe("EditItemModalContent_正常系", () => {
   const mockSetSelectionModalIsOpen = jest.fn()
   const mockSetEditModalIsOpen = jest.fn()
   
