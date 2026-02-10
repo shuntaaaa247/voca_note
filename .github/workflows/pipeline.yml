@@ -7,6 +7,12 @@ on:
       # - develop
 
 jobs:
+
+  continer-jobs:
+    runs-on: ubuntu-latest
+    containers: 
+
+
   frontend_build:
     name: frontend_build_phase
     runs-on: ubuntu-latest
@@ -72,4 +78,53 @@ jobs:
         working-directory: ./frontend
         run: npm run test
 
-          
+  backend_test:
+    name: backend_test_phase
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        # --health-cmd pg_isready：コンテナの「健全」かどうかを判定するコマンド。PostgreSQL が接続を受け付ける状態かどうかを pg_isready で確認する
+        # --health-interval 10s：その健康チェックを 10秒ごと に実行します。
+        # --health-timeout 5s：健康チェックが 5秒以内 に終わらなければ「失敗」とみなします。
+        # --health-retries 5：健康チェックが 5回連続で失敗 したら、コンテナは「不健全」とみなします。
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ./backend/package-lock.json
+
+      # - name: Create .env.test for CI
+      #   working-directory: ./backend
+      #   run: |
+      #     echo 'DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"' > .env.test
+      #     echo 'DIRECT_URL="postgresql://postgres:postgres@localhost:5432/postgres"' >> .env.test
+      #     echo 'JWT_SECRET_KEY=ci-test-secret-key' >> .env.test
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Run migrations
+        working-directory: ./backend
+        run: dotenv -e .env.test -- npx prisma migrate dev
+
+      - name: Run backend tests
+        working-directory: ./backend
+        run: npm run test
