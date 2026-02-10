@@ -75,6 +75,7 @@ jobs:
   backend_test:
     name: backend_test_phase
     runs-on: ubuntu-latest
+    # 使い捨てDBコンテナの使用の参考：https://zenn.dev/sue/articles/378fb1689f7289e556e9
     services:
       postgres:
         image: postgres:16
