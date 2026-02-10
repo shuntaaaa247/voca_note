@@ -55,9 +55,9 @@ authRouter.post("/login", async (req: Request, res: Response, next: NextFunction
         email: user.email,
         username: user.username
       }
-      // const exp: number = 60*60; //有効期限1時間
+      const exp: number = 60*60; //有効期限1時間
       // const exp: number = 60; //有効期限1分
-      const exp: number = 10; //有効期限10秒
+      // const exp: number = 10; //有効期限10秒
 
       const token = jwt.sign(payload, process.env.JWT_SECRET_KEY!, { expiresIn: exp });
       // console.log(`token => ${token}`)

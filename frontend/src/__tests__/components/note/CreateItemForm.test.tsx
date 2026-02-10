@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react"  
-import { useParams } from "next/navigation"
-import { render, screen } from "@testing-library/react"
+import { useParams, useRouter } from "next/navigation"
+import { render, screen, waitFor } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { CreateItemForm } from "@/components/note/CreateItemForm"
 import { testItems } from "@/__tests__/__utils__/testData"
@@ -17,7 +17,7 @@ const mockSetItems = jest.fn().mockImplementation((newItems: Item[]) => {
 global.fetch = jest.fn()
 const mockSetModalIsOpen = jest.fn()
 
-describe("components/CreateItemForm.tsx", () => {
+describe("CreateItemForm_正常系", () => {
   beforeEach(() => {
     // 各テストの前にモックをリセット
     mockSetItems.mockClear()
@@ -116,4 +116,49 @@ describe("components/CreateItemForm.tsx", () => {
     await screen.findByRole("button", {name: "保存"}) // findByRoleは要素が見つかるまで自動的に待つ。デフォルトでは1000ms待つ。第3引数に{ timeout: 2000 }を渡すと2000ms待つ。
     expect(screen.queryByRole("progressbar")).not.toBeInTheDocument()
   })
+})
+
+describe("CreateItemForm_異常系", () => {
+
+  test("バリデーションエラーが表示される", async () => {
+    render(<CreateItemForm setModalIsOpen={mockSetModalIsOpen} />)
+
+    const wordInput = screen.getByPlaceholderText("Apple")
+    const meaningInput = screen.getByPlaceholderText("リンゴ")
+    const submitButton = screen.getByRole("button", {name: "保存"})
+    
+    await user.clear(wordInput)
+    await user.clear(meaningInput)
+
+    await user.click(submitButton)
+
+    expect(screen.getByText("\"言葉\"は必須です")).toBeInTheDocument()
+    expect(screen.getByText("\"意味\"は必須です")).toBeInTheDocument()
+  })
+
+  test("401エラーが返ってきたらログイン画面にリダイレクトされる", async () => {
+    const mockFetch401 = jest.fn().mockImplementationOnce(() => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ status: 401 })
+        }, 100)
+      })
+    })
+    global.fetch = mockFetch401 
+    render(<CreateItemForm setModalIsOpen={mockSetModalIsOpen} />)
+
+    const wordInput = screen.getByPlaceholderText("Apple")
+    const meaningInput = screen.getByPlaceholderText("リンゴ")
+    const submitButton = screen.getByRole("button", {name: "保存"})
+    
+    await user.type(wordInput, testItems[0].word)
+    await user.type(meaningInput, testItems[0].meaning)
+    await user.click(submitButton)
+
+    await waitFor(() => {
+      expect(useRouter().push).toHaveBeenCalledWith("/login")
+    })
+  })
+    
+    
 })
