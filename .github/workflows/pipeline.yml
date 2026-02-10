@@ -93,6 +93,8 @@ jobs:
         # --health-interval 10s：その健康チェックを 10秒ごと に実行します。
         # --health-timeout 5s：健康チェックが 5秒以内 に終わらなければ「失敗」とみなします。
         # --health-retries 5：健康チェックが 5回連続で失敗 したら、コンテナは「不健全」とみなします。
+    env:
+      JWT_SECRET_KEY: ci-test-secret-key
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
