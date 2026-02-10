@@ -117,7 +117,7 @@ jobs:
 
       - name: Run migrations
         working-directory: ./backend
-        run: dotenv -e .env.test -- npx prisma migrate dev
+        run: npx dotenv-cli -e .env.test -- npx prisma migrate dev
 
       - name: Run backend tests
         working-directory: ./backend
