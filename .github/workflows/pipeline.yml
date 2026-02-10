@@ -7,12 +7,6 @@ on:
       # - develop
 
 jobs:
-
-  continer-jobs:
-    runs-on: ubuntu-latest
-    containers: 
-
-
   frontend_build:
     name: frontend_build_phase
     runs-on: ubuntu-latest
